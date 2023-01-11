@@ -17,6 +17,7 @@ void main() {
   );
 }
 
+final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontWeight: FontWeight.bold), backgroundColor: vetPrimaryColor);
 class GetAppointmentScreen extends StatelessWidget {
   const GetAppointmentScreen({super.key});
 
@@ -119,6 +120,7 @@ class GetAppointmentScreen extends StatelessWidget {
                               Row(
                                 children: [
                                   ElevatedButton(
+                                    style: style,
                                   onPressed: () {  },
                                   child: Text("Registrar cita"),
                                 ),

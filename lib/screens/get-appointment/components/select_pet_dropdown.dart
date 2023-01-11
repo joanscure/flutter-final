@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/settings/constant.dart';
 
 const List<String> list = <String>['Loky', 'Rex', 'Manchas'];
 
@@ -20,7 +21,7 @@ class _SelectPetDropdownButtonState extends State<SelectPetDropdownButton> {
       style: const TextStyle(color: Colors.black),
       underline: Container(
         height: 2,
-        color: Colors.blue,
+        color: vetPrimaryColor,
       ),
       onChanged: (String? value) {
         // This is called when the user selects an item.

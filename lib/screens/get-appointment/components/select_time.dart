@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/settings/constant.dart';
 
 String text = "Selecciona la hora";
 
@@ -8,6 +9,8 @@ class SelectTimelWidget extends StatefulWidget {
 }
 
 class _SelectTimelWidgetState extends State<SelectTimelWidget> {
+
+  final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontWeight: FontWeight.bold), foregroundColor: vetPrimaryColor);
   TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
 
   void _selectTime() async {
@@ -25,6 +28,7 @@ class _SelectTimelWidgetState extends State<SelectTimelWidget> {
 
   Widget build(BuildContext context) {
     return OutlinedButton(
+      style: style,
       onPressed: _selectTime,
       child: Text(text),
     );
