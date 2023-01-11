@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   awesome_bottom_bar: ^1.2.1
   modal_bottom_sheet: ^2.1.2
+  dash_chat_2: ^0.0.15
+
 
 dev_dependencies:
   flutter_test:
@@ -63,7 +65,13 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+
   - assets/
+    - assets/test.jpg
+    - assets/perro.jpg
+    - assets/profile-pet.jpg
+    - assets/photoprofile.jpeg
+  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -76,10 +84,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+     - family: Poppins
+       fonts:
+         - asset: fonts/poppins.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

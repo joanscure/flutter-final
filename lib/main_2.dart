@@ -1,4 +1,11 @@
+import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/screens/chat-vet/chat-vet.dart';
+import 'package:projectomovilfinal/screens/chat/chat.dart';
+import 'package:projectomovilfinal/screens/profile-client/profile_client.dart';
+import 'package:projectomovilfinal/screens/profile-vet/profile_vet.dart';
+import 'package:projectomovilfinal/settings/constant.dart';
+import 'package:projectomovilfinal/settings/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,9 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: theme(),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -29,39 +34,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  _showRecipe() async {
-    await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: const Text("Receta"),
-            children: [
-               Row(
-                children: const [
-                  Text("Antiparacitarios"),
-                  Expanded(
-                      child: Text(
-                          "Se debe desparacitar cada 15 dias, para su control"))
-                ],
-              )
-            ],
-          );
-        });
-  }
+
+  int visit = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Row(
-          children: [
-            const Text("Tratamiento 1"),
-            const Text("12/02/2023"),
-            TextButton(onPressed: _showRecipe, child: const Text("Ver Receta"))
-          ],
-        ),
-    );
+    //return ProfileclientScreen();
+    return ChatVet();
   }
 }
