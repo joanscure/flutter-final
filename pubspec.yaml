@@ -64,6 +64,7 @@ flutter:
   assets:
     - assets/test.jpg
     - assets/perro.jpg
+    - assets/profile-pet.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
