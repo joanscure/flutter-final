@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nuevo/logo.dart';
-import 'package:nuevo/registrar.dart';
+import 'package:projectomovilfinal/screens/auth/logo.dart';
+import 'package:projectomovilfinal/screens/auth/registrar.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'App Login',
-      home: Registrar (),
+      home: MyAppForm(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/settings/constant.dart';
 
 String text = 'Selecciona la fecha';
 
@@ -13,6 +14,7 @@ class SelectDatelWidget extends StatefulWidget {
 
 class _SelectDatelWidgetState extends State<SelectDatelWidget>
     with RestorationMixin {
+      final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontWeight: FontWeight.bold), foregroundColor: vetPrimaryColor);
   @override
   String? get restorationId => widget.restorationId;
 
@@ -66,6 +68,7 @@ class _SelectDatelWidgetState extends State<SelectDatelWidget>
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
+      style: style,
       onPressed: () {
         _restorableDatePickerRouteFuture.present();
       },
