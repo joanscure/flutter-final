@@ -1,5 +1,8 @@
+import 'package:awesome_bottom_bar/widgets/inspired/inspired.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/settings/constant.dart';
 
 class Home extends StatefulWidget {
   static final routeName = 'home';
@@ -10,6 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
+  int visit = 0;
   getUser() {
     return FirebaseFirestore.instance.collection("users").snapshots();
   }
@@ -46,8 +50,8 @@ class _Home extends State<Home> {
                         .collection("users")
                         .doc(id)
                         .update({
-                          'isAdmin': true,
-                        });
+                      'isAdmin': true,
+                    });
                   },
                   child: Text("actualizar"),
                 ),
@@ -56,6 +60,23 @@ class _Home extends State<Home> {
 
             return ListView(children: [...usuarios]);
           }),
+      bottomNavigationBar: 
+        BottomBarInspiredInside(
+          items: itemsTab,
+          backgroundColor: Colors.white,
+          color: vetPrimaryColor,
+          colorSelected: Colors.white,
+          itemStyle: ItemStyle.hexagon,
+          indexSelected: visit,
+          onTap: (index) => setState(() {
+            visit = index;
+          }),
+          chipStyle: const ChipStyle(
+            isHexagon: true,
+            convexBridge: true,
+            background: vetPrimaryColor
+          ),
+        ),
     );
   }
 }

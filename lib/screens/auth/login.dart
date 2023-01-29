@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:projectomovilfinal/routes.dart';
-import 'package:projectomovilfinal/screens/auth/home.dart';
+import 'package:projectomovilfinal/screens/home/home.dart';
 
-class MyAppForm extends StatefulWidget {
+class LoginForm extends StatefulWidget {
   static final routeName = 'login';
-  const MyAppForm({super.key});
+  const LoginForm({super.key});
 
   @override
-  _MyAppFormState createState() => _MyAppFormState();
+  State<LoginForm> createState() => _LoginFormState();
 }
 
-class _MyAppFormState extends State<MyAppForm> {
+class _LoginFormState extends State<LoginForm> {
   late String _email;
   late String _password;
 
@@ -20,7 +20,7 @@ class _MyAppFormState extends State<MyAppForm> {
     return Scaffold(
       backgroundColor: Colors.orange[100],
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 90.0),
+        padding: const EdgeInsets.symmetric(horizontal: 60.0, vertical: 90.0),
         children: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +66,7 @@ class _MyAppFormState extends State<MyAppForm> {
                   _password = valor;
                 },
               ),
-              Divider(
+              const Divider(
                 height: 15.0,
               ),
               SizedBox(
@@ -75,22 +75,19 @@ class _MyAppFormState extends State<MyAppForm> {
                   style: TextButton.styleFrom(
                       primary: Colors.white,
                       onSurface: Colors.blue,
-                      textStyle: TextStyle(fontSize: 20),
+                      textStyle: const TextStyle(fontSize: 20),
                       backgroundColor: Colors.orange,
-                      minimumSize: Size(100, 50),
-                      alignment: Alignment(0, 0)),
-                  child: Text('Ingresar'),
+                      minimumSize: const Size(100, 50),
+                      alignment: const Alignment(0, 0)),
+                  child: const Text('Ingresar'),
                   onPressed: () async {
                     try {
                       await FirebaseAuth.instance
                           .signInWithEmailAndPassword(
                               email: _email, password: _password)
                           .then((value) {
-                        print("Correcto!");
-                        print("Usuario: " + value.user.toString());
-                        Navigator.pushReplacementNamed(context, Home.name);
+                        Navigator.pushReplacementNamed(context, Home.routeName);
                       }).catchError((err) {
-                        print("no se logeo $err");
                       });
                     } catch (e) {
                       print("Error: $e");

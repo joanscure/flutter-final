@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/routes.dart';
-import 'package:projectomovilfinal/screens/auth/logo.dart';
+import 'package:projectomovilfinal/screens/auth/login.dart';
 import 'package:projectomovilfinal/screens/auth/registrar.dart';
 import 'firebase_options.dart';
 
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'App Login',
-      home: const MyAppForm(),
+      home: const LoginForm(),
       initialRoute: 'login',
       routes: routes,
     );

@@ -32,25 +32,24 @@ final headingStyle = TextStyle(
 
 const defaultDuration = Duration(milliseconds: 250);
 
-const List<TabItem> items = [
+const List<TabItem> itemsTab = [
   TabItem(
     icon: Icons.home,
-    // title: 'Home',
   ),
   TabItem(
     icon: Icons.search_sharp,
-    title: 'Shop',
-  ),
-  TabItem(
-    icon: Icons.favorite_border,
-    title: 'Wishlist',
-  ),
-  TabItem(
-    icon: Icons.shopping_cart_outlined,
-    title: 'Cart',
+    title: 'Perfil',
   ),
   TabItem(
     icon: Icons.account_box,
-    title: 'profile',
+    title: 'Mascotas',
+  ),
+  TabItem(
+    icon: Icons.favorite_border,
+    title: 'Veterinarios',
+  ),
+  TabItem(
+    icon: Icons.shopping_cart_outlined,
+    title: 'Atencion',
   ),
 ];
