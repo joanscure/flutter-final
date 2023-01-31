@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "566805865839",
+    "project_id": "patitas-felices-app",
+    "storage_bucket": "patitas-felices-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:566805865839:android:88313cbad9f8e31507b49a",
+        "android_client_info": {
+          "package_name": "com.example.projectomovilfinal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "566805865839-hmbnsc9ajikmdd1dmnv3sauvj1sn5kqe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWDOXLt1yrIW6BplihbxSszcF_2RbySEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "566805865839-hmbnsc9ajikmdd1dmnv3sauvj1sn5kqe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
