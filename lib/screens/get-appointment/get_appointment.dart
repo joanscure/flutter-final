@@ -30,16 +30,6 @@ void addAppointment(String appointmentPet, String appointmentDate, String appoin
         ),
     )
   })
-      // .then((value) => {
-      //   Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) {
-      //         return const GetAppointmentScreen();
-      //       },
-      //     ),
-      //   ),
-      // })
   ;
 }
 

@@ -24,8 +24,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'App Login',
       home: GetAppointmentScreen(),
-      // initialRoute: 'home',
-      // routes: routes,
     );
   }
 }
