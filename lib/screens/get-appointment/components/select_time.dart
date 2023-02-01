@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 
 String text = "Selecciona la hora";
+typedef OnTimeSelectedCallback = void Function(TimeOfDay timeOfDay);
 
 class SelectTimelWidget extends StatefulWidget {
+  SelectTimelWidget({super.key, this.onTimeSelected});
+
+  final OnTimeSelectedCallback? onTimeSelected;
+
   @override
   _SelectTimelWidgetState createState() => _SelectTimelWidgetState();
 }
@@ -23,6 +28,7 @@ class _SelectTimelWidgetState extends State<SelectTimelWidget> {
         _time = newTime;
       });
       text = '${_time.format(context)}';
+      widget.onTimeSelected!(_time);
     }
   }
 

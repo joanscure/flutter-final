@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 
 String text = 'Selecciona la fecha';
+typedef OnDateSelectedCallback = void Function(DateTime date);
 
 class SelectDatelWidget extends StatefulWidget {
-  const SelectDatelWidget({super.key, this.restorationId});
+  SelectDatelWidget({super.key, this.restorationId, this.onDateSelected});
 
   final String? restorationId;
+  final OnDateSelectedCallback? onDateSelected;
 
   @override
   State<SelectDatelWidget> createState() => _SelectDatelWidgetState();
@@ -62,6 +64,7 @@ class _SelectDatelWidgetState extends State<SelectDatelWidget>
         _selectedDate.value = newSelectedDate;
       });
       text = '${_selectedDate.value.day}/${_selectedDate.value.month}/${_selectedDate.value.year}';
+      widget.onDateSelected!(_selectedDate.value);
     }
   }
 
