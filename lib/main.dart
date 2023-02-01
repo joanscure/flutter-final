@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/routes.dart';
 import 'package:projectomovilfinal/screens/auth/login.dart';
 import 'package:projectomovilfinal/screens/auth/registrar.dart';
+import 'package:projectomovilfinal/screens/get-appointment/get_appointment.dart';
+import 'package:projectomovilfinal/screens/home/home.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -10,18 +12,20 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'App Login',
-      home: const LoginForm(),
-      initialRoute: 'login',
-      routes: routes,
+      home: GetAppointmentScreen(),
+      // initialRoute: 'home',
+      // routes: routes,
     );
   }
 }

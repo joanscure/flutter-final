@@ -1,23 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/screens/get-appointment/components/alert_dialog_appointment.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'components/request_appointment_button.dart';
 import 'components/select_date.dart';
 import 'components/select_pet_dropdown.dart';
 import 'components/select_time.dart';
 
-void main() {
-  runApp(
-    const MaterialApp(
-      home: GetAppointmentScreen(),
-    ),
-  );
+final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontWeight: FontWeight.bold), backgroundColor: vetPrimaryColor);
+String fechaCita = "";
+String timeCita = "";
+String pet = "";
+
+void addAppointment(String appointmentPet, String appointmentDate, String appointmentTime, BuildContext context) async {
+  await FirebaseFirestore.instance.collection('appointments').add({
+    'pet': appointmentPet,
+    'date': appointmentDate,
+    'time': appointmentTime,
+  }).then((value) => {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => const AlertDialogAppointment(
+          tittle: "Notificación",
+          description: "Su cita fue registrada con éxito",
+        ),
+    )
+  })
+      // .then((value) => {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) {
+      //         return const GetAppointmentScreen();
+      //       },
+      //     ),
+      //   ),
+      // })
+  ;
 }
 
-final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontWeight: FontWeight.bold), backgroundColor: vetPrimaryColor);
 class GetAppointmentScreen extends StatelessWidget {
   const GetAppointmentScreen({super.key});
 
@@ -99,30 +124,52 @@ class GetAppointmentScreen extends StatelessWidget {
                             child: Column(children: [
 
                               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: const [
-                                    Text("Seleccionar mascota"),
-                                    SelectPetDropdownButton(),
+                                  children: [
+                                    const Text("Seleccionar mascota"),
+                                    SelectPetDropdownButton(
+                                      onPetSelected: (String selectedPet) {
+                                        pet = selectedPet;
+                                        print(pet);
+                                      },
+                                    ),
                                   ]
                               ),
 
                               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                Text("Fecha"),
-                                SelectDatelWidget(),
+                                children: [
+                                const Text("Fecha"),
+                                SelectDatelWidget(
+                                  onDateSelected: (DateTime date) {
+                                    fechaCita = "${date.day}/${date.month}/${date.year}";
+                                    print(fechaCita);
+                                  },
+                                ),
                               ],),
 
                               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                Text("Hora"),
-                                SelectTimelWidget(),
+                                const Text("Hora"),
+                                SelectTimelWidget(
+                                  onTimeSelected: (TimeOfDay time) {
+                                    timeCita = '${time.format(context)}';
+                                    print(timeCita);
+                                  },
+                                ),
                               ],),
 
                               Row(
                                 children: [
                                   ElevatedButton(
                                     style: style,
-                                  onPressed: () {  },
-                                  child: Text("Registrar cita"),
+                                  onPressed: () {
+                                      try {
+                                        addAppointment(pet, fechaCita, timeCita, context);
+                                      }
+                                      catch (e) {
+                                        print('Error: $e');
+                                      }
+                                  },
+                                  child: const Text("Registrar cita"),
                                 ),
                                 ],),
 
