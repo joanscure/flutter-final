@@ -15,7 +15,7 @@ class _QuickRepliesSampleState extends State<QuickRepliesSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rosaly lizano (Veterinaria)', style: TextStyle(color: vetTextColor),),
+        title: const Text('Recepcionista', style: TextStyle(color: Colors.white),),
       ),
       body: DashChat(
         currentUser: user,

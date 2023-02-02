@@ -57,23 +57,6 @@ class _VetScreen extends State<VetScreen> {
 
             return ListView(children: [...usuarios]);
           }),
-      bottomNavigationBar: 
-        BottomBarInspiredInside(
-          items: itemsTab,
-          backgroundColor: Colors.white,
-          color: ColorsApp[ColorsAppEnum.gray],
-          colorSelected: Colors.white,
-          itemStyle: ItemStyle.hexagon,
-          indexSelected: visit,
-          onTap: (index) => setState(() {
-            visit = index;
-          }),
-          chipStyle: ChipStyle(
-            isHexagon: true,
-            convexBridge: true,
-            background: ColorsApp[ColorsAppEnum.menu],
-          ),
-        ),
     );
   }
 }
