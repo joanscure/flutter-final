@@ -72,7 +72,7 @@ class _DrawerModelState extends State<DrawerModel> {
               }),
 
           ListTile(
-              leading: const Icon(Icons.event),
+              leading: const Icon(Icons.people),
               title: const Text('Veterinarios'),
               onTap: () {
                 context.read<SelectViewModel>().set(Section.LISTVET, "");
