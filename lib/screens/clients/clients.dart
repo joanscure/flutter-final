@@ -7,20 +7,17 @@ import 'package:projectomovilfinal/settings/constant.dart';
 
 import 'package:provider/provider.dart';
 
-class VetScreen extends StatefulWidget {
-  const VetScreen({super.key});
+class ClientsScreen extends StatefulWidget {
+  const ClientsScreen({super.key});
 
   @override
-  State<VetScreen> createState() => _VetScreen();
+  State<ClientsScreen> createState() => _ClientsScreen();
 }
 
-class _VetScreen extends State<VetScreen> {
+class _ClientsScreen extends State<ClientsScreen> {
   int visit = 0;
   getUser() {
-    return FirebaseFirestore.instance
-        .collection("users")
-        .where("isVet", isEqualTo: true)
-        .snapshots();
+    return FirebaseFirestore.instance.collection("users").where("isClient", isEqualTo: true).snapshots();
   }
 
   @override
@@ -52,7 +49,7 @@ class _VetScreen extends State<VetScreen> {
                 leading: TextButton(
                   onPressed: () {
                     objectID = id;
-                    context.read<SelectViewModel>().set(Section.VET, "");
+                    context.read<SelectViewModel>().set(Section.PROFILE, "");
                   },
                   child: const Text("Ver Perfil"),
                 ),

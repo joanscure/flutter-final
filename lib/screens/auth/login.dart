@@ -26,7 +26,7 @@ class _LoginFormState extends State<LoginForm> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/logo.png'),
+              Image.asset('assets/logo.jpg'),
               SizedBox(
                 width: 160.0,
                 height: 15.0,

@@ -2,7 +2,18 @@ import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 
-enum ColorsAppEnum { blue, gray, white, backgroundLight, grey, dark, menu, button, title,info }
+enum ColorsAppEnum {
+  blue,
+  gray,
+  white,
+  backgroundLight,
+  grey,
+  dark,
+  menu,
+  button,
+  title,
+  info
+}
 
 const Map<ColorsAppEnum, dynamic> ColorsApp = {
   ColorsAppEnum.blue: Color(0xFF1786f9),
@@ -15,7 +26,6 @@ const Map<ColorsAppEnum, dynamic> ColorsApp = {
   ColorsAppEnum.button: Color(0xFF7b5bf2),
   ColorsAppEnum.title: Color(0xFF2f2e2e),
   ColorsAppEnum.info: Color(0xFF808085),
-
 };
 
 MaterialColor colorPrincipal = Colors.blue;
@@ -48,6 +58,7 @@ final headingStyle = TextStyle(
 );
 
 const defaultDuration = Duration(milliseconds: 250);
+String objectID = '';
 
 const List<TabItem> itemsTab = [
   TabItem(
@@ -69,7 +80,9 @@ enum Section {
   CHAT,
   VET,
   LISTVET,
+  LiSTCUSTOMER,
   PROFILE,
   APPOINTMENT,
+  PETPROFILE,
   CALENDAR,
 }

@@ -78,6 +78,14 @@ class _DrawerModelState extends State<DrawerModel> {
                 context.read<SelectViewModel>().set(Section.LISTVET, "");
                 Navigator.pop(context);
               }),
+
+          ListTile(
+              leading: const Icon(Icons.people),
+              title: const Text('Clientes'),
+              onTap: () {
+                context.read<SelectViewModel>().set(Section.LiSTCUSTOMER, "");
+                Navigator.pop(context);
+              }),
         ],
       ),
     );

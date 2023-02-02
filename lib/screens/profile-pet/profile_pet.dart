@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 
+import 'package:provider/provider.dart';
 class ProfilePetScreen extends StatefulWidget {
   const ProfilePetScreen({super.key});
 
@@ -13,21 +17,72 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
   static const List<Tab> petTabs = <Tab>[
-    Tab(text: 'TRAMAMIENTOS'),
-    Tab(text: 'CITAS'),
+    Tab(text: 'EVENTOS'),
+    Tab(text: 'HISTORIAL'),
   ];
+  late bool loading;
+
+  List<Map<String, dynamic>> events = [];
+  List<Map<String, dynamic>> histories = [];
+  late Map<String, dynamic> pet = {};
+  getPet() async {
+    var refPet =
+        await FirebaseFirestore.instance.collection("pets").doc(objectID).get();
+    pet = refPet.data() as Map<String, dynamic>;
+
+    var eventRef = await FirebaseFirestore.instance
+        .collection("pets")
+        .doc(objectID)
+        .collection("events")
+        .get();
+
+    eventRef.docs.forEach((item) {
+      events.add({...item.data(), "id": item.id});
+    });
+
+    var historyRef = await FirebaseFirestore.instance
+        .collection("pets")
+        .doc(objectID)
+        .collection("histories")
+        .get();
+
+    historyRef.docs.forEach((item) {
+      histories.add({...item.data(), "id": item.id});
+    });
+
+    setState(() {
+      loading = false;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 2, vsync: this);
+    loading = true;
+    getPet();
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    if (loading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_circle_left),
+            tooltip: 'Atras',
+            onPressed: () {
+              objectID = pet['userId'];
+
+              context.read<SelectViewModel>().set(Section.PROFILE, "");
+            },
+          ),
           title: const Text("Detalle de Mascota",
               style: TextStyle(
                   color: vetTextTitleColor, fontWeight: FontWeight.bold)),
@@ -65,39 +120,41 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
                       child: Container(
                         width: SizeConfig.screenWidth,
                         child: TabBarView(
-                          controller: _controller,
-                          children: petTabs.map((Tab tab) {
-                            final String label = tab.text!.toLowerCase();
-                            if (label == 'citas') {
-                              return ListView.builder(
-                                  itemCount: 5,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
+                            controller: _controller,
+                            children: petTabs.map((Tab tab) {
+                              final String label = tab.text!.toLowerCase();
+                              if (label == 'eventos') {
+                                return ListView(children: [
+                                  ...events.map((item) {
+                                    DateTime now =
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            item['date']);
+                                    String date =
+                                        DateFormat('yyyy-MM-dd').format(now);
                                     return ListTile(
-                                        trailing: const Text(
-                                          "Ver Receta",
-                                          style: TextStyle(
-                                              color: vetSecondaryColor,
-                                              fontSize: 15),
-                                        ),
-                                        title: Text("${index + 1}/02/23 - Cita ${index + 1}"));
-                                  });
-                            }
-                            return ListView.builder(
-                                  itemCount: 5,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return ListTile(
-                                        trailing: const Text(
-                                          "Ver Tratamiento",
-                                          style: TextStyle(
-                                              color: vetSecondaryColor,
-                                              fontSize: 15),
-                                        ),
-                                        title: Text("${index + 1}/02/23 - Tratamiento"));
-                                  });
-                          }).toList(),
-                        ),
+                                        title: Text(
+                                            "${date} - ${item['reason']}"));
+                                  })
+                                ]);
+                              }
+                              return ListView(children: [
+                                ...histories.map((item) {
+                                  DateTime now =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item['date']);
+                                  String date =
+                                      DateFormat('yyyy-MM-dd').format(now);
+                                  return ListTile(
+                                      trailing: const Text(
+                                        "Ver Detalle",
+                                        style: TextStyle(
+                                            color: vetSecondaryColor,
+                                            fontSize: 15),
+                                      ),
+                                      title: Text("$date - ${item['reason']}"));
+                                })
+                              ]);
+                            }).toList()),
                       ),
                     ),
                   ],
@@ -117,10 +174,10 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
                   elevation: 5,
                   child: ListTile(
                     contentPadding: const EdgeInsets.fromLTRB(15, 10, 25, 0),
-                    title: const Padding(
+                    title: Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                      child: Text("SCOTT",
+                      child: Text(pet['name'],
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: vetTextColor)),
@@ -131,15 +188,15 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            "Perro",
+                            pet['petType'],
                             style: TextStyle(color: vetTextColor),
                           ),
                           Text.rich(
                             TextSpan(text: "Raza: ", children: [
                               TextSpan(
-                                text: "Pastor Alemán",
+                                text: pet['breed'],
                                 style: TextStyle(
                                     color: vetTextColor,
                                     fontWeight: FontWeight.bold),
@@ -149,7 +206,7 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
                           Text.rich(
                             TextSpan(text: "Edad: ", children: [
                               TextSpan(
-                                text: " 4años",
+                                text: "---",
                                 style: TextStyle(
                                     color: vetTextColor,
                                     fontWeight: FontWeight.bold),
