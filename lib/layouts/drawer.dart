@@ -56,14 +56,6 @@ class _DrawerModelState extends State<DrawerModel> {
               }),
 
           ListTile(
-              leading: const Icon(Icons.account_box),
-              title: const Text('Perfil'),
-              onTap: () {
-                context.read<SelectViewModel>().set(Section.PROFILE, "");
-                Navigator.pop(context);
-              }),
-
-          ListTile(
               leading: const Icon(Icons.event),
               title: const Text('Calendario'),
               onTap: () {
@@ -76,6 +68,14 @@ class _DrawerModelState extends State<DrawerModel> {
               title: const Text('Veterinarios'),
               onTap: () {
                 context.read<SelectViewModel>().set(Section.LISTVET, "");
+                Navigator.pop(context);
+              }),
+
+          ListTile(
+              leading: const Icon(Icons.people),
+              title: const Text('Clientes'),
+              onTap: () {
+                context.read<SelectViewModel>().set(Section.LiSTCUSTOMER, "");
                 Navigator.pop(context);
               }),
         ],

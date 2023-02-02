@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 
 class SelectViewModel extends ChangeNotifier {
-  Section _selectView = Section.HOME;
+  Section _selectView = Section.LISTVET;
   Section get selectView => _selectView;
 
   String _token = "";
