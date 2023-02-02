@@ -56,14 +56,6 @@ class _DrawerModelState extends State<DrawerModel> {
               }),
 
           ListTile(
-              leading: const Icon(Icons.account_box),
-              title: const Text('Perfil'),
-              onTap: () {
-                context.read<SelectViewModel>().set(Section.PROFILE, "");
-                Navigator.pop(context);
-              }),
-
-          ListTile(
               leading: const Icon(Icons.event),
               title: const Text('Calendario'),
               onTap: () {
