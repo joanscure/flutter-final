@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/routes.dart';
 import 'package:projectomovilfinal/screens/auth/login.dart';
 import 'package:projectomovilfinal/screens/auth/registrar.dart';
-import 'package:projectomovilfinal/screens/get-appointment/get_appointment.dart';
-import 'package:projectomovilfinal/screens/home/home.dart';
+import 'package:projectomovilfinal/screens/profile-client/profile_client.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -12,18 +13,30 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  Provider.debugCheckInvalidValueType = null;
+
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SelectViewModel()),
+      ],
+      child: MaterialApp(
+        home: MyApp(),
+        //builder: EasyLoading.init(),
+      )));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'App Login',
-      home: GetAppointmentScreen(),
+      theme: ThemeData(
+        fontFamily: 'Poppins'
+        ),
+      home: const LoginForm(),
+      initialRoute: 'login',
+      routes: mainRoutes,
     );
   }
 }

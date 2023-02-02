@@ -42,6 +42,7 @@ dependencies:
   firebase_core: ^2.4.1
   firebase_auth: ^4.2.5
   cloud_firestore: ^4.3.1
+  provider: ^6.0.5
 
 
 dev_dependencies:
@@ -59,6 +60,11 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+dependency_overrides:
+  modal_bottom_sheet:
+    git:
+      url: https://github.com/danReynolds/modal_bottom_sheet.git
+      path: modal_bottom_sheet
 flutter:
 
   # The following line ensures that the Material Icons font is

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
+
+import 'package:provider/provider.dart';
 
 class ProfileVetScreen extends StatelessWidget {
   const ProfileVetScreen({super.key});
@@ -75,7 +78,7 @@ class ProfileVetScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: const [
-                    Icon(Icons.whatsapp),
+                    Icon(Icons.phone_iphone),
                     SizedBox(width: 10),
                     Text("+51 203 494 494"),
                   ],
@@ -165,7 +168,7 @@ class ProfileVetScreen extends StatelessWidget {
                             shape: CircleBorder(),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.whatsapp),
+                            icon: const Icon(Icons.phone_iphone),
                             color: vetPrimaryDarkColor,
                             onPressed: () {},
                           ),
@@ -179,7 +182,9 @@ class ProfileVetScreen extends StatelessWidget {
                           child: IconButton(
                             icon: const Icon(Icons.calendar_month),
                             color: vetPrimaryDarkColor,
-                            onPressed: () {},
+                            onPressed: () {
+                              context.read<SelectViewModel>().set(Section.APPOINTMENT, "");
+                            },
                           ),
                         )
                       ],

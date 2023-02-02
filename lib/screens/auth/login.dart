@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:projectomovilfinal/routes.dart';
 import 'package:projectomovilfinal/screens/home/home.dart';
+import 'package:projectomovilfinal/settings/constant.dart';
 
 class LoginForm extends StatefulWidget {
   static final routeName = 'login';
@@ -18,22 +19,14 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange[100],
+      backgroundColor: ColorsApp[ColorsAppEnum.backgroundLight],
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 60.0, vertical: 90.0),
         children: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircleAvatar(
-                radius: 150.0,
-                backgroundColor: Colors.transparent,
-                backgroundImage: AssetImage('assets/logo.png'),
-              ),
-              const Text(
-                'VETERINARIA',
-                style: TextStyle(fontSize: 20.0),
-              ),
+              Image.asset('assets/logo.png'),
               SizedBox(
                 width: 160.0,
                 height: 15.0,
@@ -45,7 +38,7 @@ class _LoginFormState extends State<LoginForm> {
                     labelText: 'Email',
                     suffixIcon: const Icon(Icons.alternate_email),
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0))),
+                        borderRadius: BorderRadius.circular(10.0))),
                 onChanged: (valor) {
                   _email = valor;
                 },
@@ -61,7 +54,7 @@ class _LoginFormState extends State<LoginForm> {
                     labelText: 'Password',
                     suffixIcon: const Icon(Icons.lock_outline),
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0))),
+                        borderRadius: BorderRadius.circular(10.0))),
                 onChanged: (valor) {
                   _password = valor;
                 },
@@ -76,7 +69,8 @@ class _LoginFormState extends State<LoginForm> {
                       primary: Colors.white,
                       onSurface: Colors.blue,
                       textStyle: const TextStyle(fontSize: 20),
-                      backgroundColor: Colors.orange,
+                      backgroundColor: ColorsApp[ColorsAppEnum.button],
+                      foregroundColor: ColorsApp[ColorsAppEnum.white],
                       minimumSize: const Size(100, 50),
                       alignment: const Alignment(0, 0)),
                   child: const Text('Ingresar'),

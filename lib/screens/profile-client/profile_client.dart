@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 
-class ProfileclientScreen extends StatelessWidget {
-  const ProfileclientScreen({super.key});
+class ProfileClientScreen extends StatelessWidget {
+  const ProfileClientScreen({super.key});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -104,7 +104,7 @@ class ProfileclientScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: const [
-                    Icon(Icons.whatsapp),
+                    Icon(Icons.phone_iphone),
                     SizedBox(width: 10),
                     Text("+51 203 494 494"),
                   ],
@@ -178,7 +178,7 @@ class ProfileclientScreen extends StatelessWidget {
                             shape: CircleBorder(),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.whatsapp),
+                            icon: const Icon(Icons.phone_iphone),
                             color: vetPrimaryDarkColor,
                             onPressed: () {},
                           ),
