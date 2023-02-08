@@ -1,10 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/routes.dart';
 import 'package:projectomovilfinal/screens/auth/login.dart';
-import 'package:projectomovilfinal/screens/auth/registrar.dart';
-import 'package:projectomovilfinal/screens/profile-client/profile_client.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -21,8 +20,26 @@ void main() async {
       ],
       child: MaterialApp(
         home: MyApp(),
+        builder: EasyLoading.init(),
         //builder: EasyLoading.init(),
       )));
+  configLoading();
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.dark
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..progressColor = Colors.yellow
+    ..backgroundColor = Colors.green
+    ..indicatorColor = Colors.yellow
+    ..textColor = Colors.yellow
+    ..maskType = EasyLoadingMaskType.black
+    ..userInteractions = true
+    ..dismissOnTap = false;
 }
 
 class MyApp extends StatelessWidget {
@@ -31,9 +48,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'App Login',
-      theme: ThemeData(
-        fontFamily: 'Poppins'
-        ),
+      theme: ThemeData(fontFamily: 'Poppins'),
       home: const LoginForm(),
       initialRoute: 'login',
       routes: mainRoutes,

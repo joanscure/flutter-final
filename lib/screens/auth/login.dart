@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:projectomovilfinal/routes.dart';
 import 'package:projectomovilfinal/screens/home/home.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
@@ -15,6 +16,36 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   late String _email;
   late String _password;
+  _login() async {
+    try {
+      EasyLoading.show(status: 'Cargando...');
+
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password)
+          .then((value) {
+        Navigator.pushReplacementNamed(context, Home.routeName);
+        EasyLoading.showSuccess("BIENVENIDO!");
+      }).catchError((err) {
+        String codeError = err.code;
+        String message = err.message;
+
+        if (codeError == 'invalid-email') {
+          message = ('El correo es inválido');
+        } else if (codeError == 'user-disabled') {
+          message = ('El usuario has sido deshabilitado');
+        } else if (codeError == 'user-not-found') {
+          message = ('El usuario no existe.');
+        } else if (codeError == 'wrong-password') {
+          message = ('La contraseña es incorrecta.');
+        }
+        EasyLoading.showError(message);
+      });
+    } catch (e) {
+      EasyLoading.showError('Revise su conexión a internet.');
+    }
+
+    EasyLoading.dismiss();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,19 +105,7 @@ class _LoginFormState extends State<LoginForm> {
                       minimumSize: const Size(100, 50),
                       alignment: const Alignment(0, 0)),
                   child: const Text('Ingresar'),
-                  onPressed: () async {
-                    try {
-                      await FirebaseAuth.instance
-                          .signInWithEmailAndPassword(
-                              email: _email, password: _password)
-                          .then((value) {
-                        Navigator.pushReplacementNamed(context, Home.routeName);
-                      }).catchError((err) {
-                      });
-                    } catch (e) {
-                      print("Error: $e");
-                    }
-                  },
+                  onPressed: _login,
                 ),
               ),
             ],
