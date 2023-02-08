@@ -23,6 +23,8 @@ class _ProfileVetScreen extends State<ProfileVetScreen> {
         .doc(objectID)
         .get();
     user = refUser.data() as Map<String, dynamic>;
+    // String imageUrl = user['profile']['photoUrl'];
+    print(user['profile']['photoUrl']);
     setState(() {
       loading = false;
     });
@@ -61,7 +63,12 @@ class _ProfileVetScreen extends State<ProfileVetScreen> {
                 SizedBox(
                   height: 200,
                   width: double.infinity,
-                  child: Image.asset(
+                  child: user['profile']['photoUrl'] != ''
+                  ? Image.network(
+                      user['profile']['photoUrl'],
+                    fit: BoxFit.cover,
+                  )
+                  : Image.asset(
                     "assets/test.jpg",
                     fit: BoxFit.cover,
                   ),

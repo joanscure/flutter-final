@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/screens/get-appointment/components/alert_dialog_appointment.dart';
+import 'package:projectomovilfinal/screens/home/home.dart';
+import 'package:projectomovilfinal/screens/profile-client/profile_client.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 
@@ -28,7 +30,14 @@ void addAppointment(String appointmentPet, String appointmentDate, String appoin
           tittle: "Notificación",
           description: "Su cita fue registrada con éxito",
         ),
-    )
+    ).then((value) => Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return const Home();
+        },
+      ),
+    ))
   })
   ;
 }
