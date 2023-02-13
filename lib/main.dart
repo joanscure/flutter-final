@@ -1,11 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:projectomovilfinal/notifier/user-notifier.dart';
 import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/routes.dart';
 import 'package:projectomovilfinal/screens/auth/login.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,10 +15,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Provider.debugCheckInvalidValueType = null;
+  await initializeDateFormatting();
 
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SelectViewModel()),
+        ChangeNotifierProvider(create: (_) => UserNotifier()),
       ],
       child: MaterialApp(
         home: MyApp(),

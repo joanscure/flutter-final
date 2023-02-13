@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:projectomovilfinal/routes.dart';
 import 'package:projectomovilfinal/screens/home/home.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginForm extends StatefulWidget {
   static final routeName = 'login';
@@ -16,13 +18,30 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   late String _email;
   late String _password;
+  bool loading = true;
   _login() async {
     try {
       EasyLoading.show(status: 'Cargando...');
 
+      final prefs = await SharedPreferences.getInstance();
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: _email, password: _password)
-          .then((value) {
+          .then((value) async {
+        var users = await FirebaseFirestore.instance
+            .collection("users")
+            .where("email", isEqualTo: _email)
+            .get();
+        if (users.docs.isEmpty) {
+          EasyLoading.showError('Usted no está registrado.');
+          return;
+        }
+        var data = users.docs[0].data();
+
+        prefs.setString("id", users.docs[0].id);
+        prefs.setString("email", data['email']);
+        prefs.setString("name", data['fullname']);
+        prefs.setBool("isAdmin", data['isAdmin']);
+        prefs.setBool("isClient", data['isClient']? true: false);
         Navigator.pushReplacementNamed(context, Home.routeName);
         EasyLoading.showSuccess("BIENVENIDO!");
       }).catchError((err) {
@@ -47,8 +66,32 @@ class _LoginFormState extends State<LoginForm> {
     EasyLoading.dismiss();
   }
 
+  checklogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString("id");
+    if (id != null) {
+      Navigator.pushReplacementNamed(context, Home.routeName);
+      return;
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checklogin();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Scaffold(
       backgroundColor: ColorsApp[ColorsAppEnum.backgroundLight],
       body: ListView(

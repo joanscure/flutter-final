@@ -4,7 +4,10 @@ import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/layouts/drawer.dart';
 import 'package:projectomovilfinal/layouts/header.dart';
+import 'package:projectomovilfinal/models/user.dart';
+import 'package:projectomovilfinal/notifier/user-notifier.dart';
 import 'package:projectomovilfinal/notifier/view-model.dart';
+import 'package:projectomovilfinal/screens/calendar/calendar.dart';
 import 'package:projectomovilfinal/screens/chat-client/chat-client.dart';
 import 'package:projectomovilfinal/screens/clients/clients.dart';
 import 'package:projectomovilfinal/screens/get-appointment/get_appointment.dart';
@@ -14,6 +17,7 @@ import 'package:projectomovilfinal/screens/profile-vet/profile_vet.dart';
 import 'package:projectomovilfinal/screens/vets/vets.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   static const routeName = 'home';
@@ -24,9 +28,30 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
+  setUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id") ?? '';
+    String email = prefs.getString("email") ?? '';
+    String name = prefs.getString("name") ?? '';
+    bool isAdmin = prefs.getBool("isAdmin") ?? false;
+    bool isClient = prefs.getBool("isClient") ?? true;
+
+    context.read<UserNotifier>().set(UserLocal(
+        id: id,
+        email: email,
+        name: name,
+        isAdmin: isAdmin,
+        isClient: isClient));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setUser();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     var section = Provider.of<SelectViewModel>(context).selectView;
     Widget bodyContent = const SizedBox();
     switch (section) {
@@ -37,7 +62,7 @@ class _Home extends State<Home> {
         bodyContent = const ProfileClientScreen();
         break;
       case Section.CALENDAR:
-        bodyContent = const SizedBox();
+        bodyContent = CalendarScreen();
         break;
       case Section.LISTVET:
         bodyContent = const VetScreen();
