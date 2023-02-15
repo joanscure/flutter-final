@@ -90,6 +90,16 @@ class _DrawerModelState extends State<DrawerModel> {
               Navigator.pop(context);
             }),
       );
+      listOptions.add(
+        ListTile(
+            leading: const Icon(Icons.question_answer),
+            title: const Text('Solicitar Cita'),
+            onTap: () {
+              objectID = '';
+              context.read<SelectViewModel>().set(Section.APPOINTMENT, "");
+              Navigator.pop(context);
+            }),
+      );
     }
     if (!user.isAdmin) {
       listOptions.add(ListTile(

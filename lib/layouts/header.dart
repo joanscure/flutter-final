@@ -3,6 +3,7 @@ import 'package:projectomovilfinal/screens/auth/login.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HeaderApp extends StatefulWidget implements PreferredSizeWidget {
   const HeaderApp({Key? key})
@@ -31,20 +32,20 @@ class _CustomAppBarState extends State<HeaderApp> {
     return IconButton(
       icon: const Icon(Icons.account_circle),
       tooltip: 'Usuario',
-      onPressed: _onPressed,
+      onPressed: _confirmDialog,
     );
   }
 
-  Future<void> _onPressed() async {
+  logout() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setString('id', '');
+    prefs.clear();
+    Navigator.pushNamed(context, LoginForm.routeName);
+    //await FirebaseAuth.instance.signOut();
   }
 
-  logout(BuildContext context) async {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (BuildContext context) => LoginForm()));
-	  //await FirebaseAuth.instance.signOut();
-  }
-
-  Future<void> _confirmDialog(BuildContext context) async {
+  Future<void> _confirmDialog() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -69,7 +70,7 @@ class _CustomAppBarState extends State<HeaderApp> {
               child: const Text('Aceptar'),
               onPressed: () {
                 Navigator.of(context).pop();
-                logout(context);
+                logout();
                 // Navigator.of(context).pop();
               },
             ),

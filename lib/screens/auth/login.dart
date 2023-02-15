@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/routes.dart';
 import 'package:projectomovilfinal/screens/home/home.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class LoginForm extends StatefulWidget {
   static final routeName = 'login';
@@ -41,7 +43,9 @@ class _LoginFormState extends State<LoginForm> {
         prefs.setString("email", data['email']);
         prefs.setString("name", data['fullname']);
         prefs.setBool("isAdmin", data['isAdmin']);
-        prefs.setBool("isClient", data['isClient']? true: false);
+        prefs.setBool("isClient", data['isClient'] ? true : false);
+
+        context.read<SelectViewModel>().set(Section.LISTVET, "");
         Navigator.pushReplacementNamed(context, Home.routeName);
         EasyLoading.showSuccess("BIENVENIDO!");
       }).catchError((err) {
@@ -60,7 +64,7 @@ class _LoginFormState extends State<LoginForm> {
         EasyLoading.showError(message);
       });
     } catch (e) {
-      EasyLoading.showError('Revise su conexión a internet.');
+      EasyLoading.showError('Error no se pudo authenticar: ${e.toString()}');
     }
 
     EasyLoading.dismiss();
