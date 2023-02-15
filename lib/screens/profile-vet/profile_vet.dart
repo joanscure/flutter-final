@@ -226,6 +226,7 @@ class _ProfileVetScreen extends State<ProfileVetScreen> {
                             icon: const Icon(Icons.calendar_month),
                             color: vetPrimaryDarkColor,
                             onPressed: () {
+                              objectID = objectID;
                               context.read<SelectViewModel>().set(Section.APPOINTMENT, "");
                             },
                           ),

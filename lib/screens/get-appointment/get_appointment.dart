@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'components/request_appointment_button.dart';
-
 
 class GetAppointmentScreen extends StatelessWidget {
 
@@ -88,14 +88,19 @@ class GetAppointmentScreen extends StatelessWidget {
     TextEditingController mascotaController = TextEditingController();
     TextEditingController fechaController = TextEditingController();
     TextEditingController horaController = TextEditingController();
-
+    late Map<String, dynamic> vet = {};
+    String? userId;
+    String? petId;
+    DateTime? dayPicked;
+    TimeOfDay? timePicked;
 
     Future<void> showMascotasModal(BuildContext context) async {
-
+      final prefs = await SharedPreferences.getInstance();
+      userId = prefs.getString('id');
       FirebaseFirestore firestore = FirebaseFirestore.instance;
 
       // Hacer la consulta a la colección de mascotas
-      QuerySnapshot querySnapshot = await firestore.collection('pets').get();
+      QuerySnapshot querySnapshot = await firestore.collection('pets').where("userId", isEqualTo: userId).get();
 
       // Iterar sobre los documentos y crear los ListTile
       List<Widget> listTiles = querySnapshot.docs.map((doc) {
@@ -103,6 +108,7 @@ class GetAppointmentScreen extends StatelessWidget {
           title: Text(doc.get("name").toString()),
           onTap: () {
             mascotaController.text = doc.get("name").toString();
+            petId = doc.id;
             Navigator.pop(context);
           },
         );
@@ -124,6 +130,42 @@ class GetAppointmentScreen extends StatelessWidget {
           );
         },
       );
+    }
+
+    int getIntFromDatetime(DateTime? date, TimeOfDay? time) {
+      int hours = time!.hour;
+      int minutes = time.minute;
+
+      date = date!.add(Duration(hours: hours, minutes: minutes));
+      print(date);
+      int millisecondsSinceEpoch = date.millisecondsSinceEpoch;
+      print(millisecondsSinceEpoch);
+      return millisecondsSinceEpoch;
+    }
+
+    getVet() async{
+      var refVet = await FirebaseFirestore.instance.collection("users").doc(objectID).get();
+      vet = refVet.data() as Map<String, dynamic>;
+      print(vet['fullname']);
+    }
+
+    void addAppointment(int dateAppointment) async{
+      getVet().then((value) async => {
+        await FirebaseFirestore.instance.collection('appointments').add({
+          'assignedId': objectID,
+          'assignedName': vet['fullname'],
+          'date': dateAppointment,
+          'petId': petId,
+          'petName': mascotaController.text,
+          'userId': userId,
+          'isApproved': false,
+          'isClose':  false,
+          'notes':  "",
+          'reason':  "Cita Programada",
+        })
+      }).then((value) => {
+        print('esta'),
+      });
     }
 
     showDialog(
@@ -165,6 +207,7 @@ class GetAppointmentScreen extends StatelessWidget {
                           "${picked.day}/${picked.month}/${picked.year}";
                         });
                       }
+                      dayPicked = picked;
                     },
                     child: IgnorePointer(
                       child: TextField(
@@ -191,6 +234,7 @@ class GetAppointmentScreen extends StatelessWidget {
                           "${picked.hour}:${picked.minute}";
                         });
                       }
+                      timePicked = picked;
                     },
                     child: IgnorePointer(
                       child: TextField(
@@ -202,13 +246,6 @@ class GetAppointmentScreen extends StatelessWidget {
                     ),
 
                   ),
-
-                  // TextField(
-                  //   controller: horaController,
-                  //   decoration: const InputDecoration(
-                  //     hintText: 'Hora de la cita',
-                  //   ),
-                  // ),
 
                 ],
               ),
@@ -225,6 +262,14 @@ class GetAppointmentScreen extends StatelessWidget {
                     print('Mascota: ${mascotaController.text}');
                     print('Fecha: ${fechaController.text}');
                     print('Hora: ${horaController.text}');
+                    print(dayPicked);
+
+                    int dateAppointment = getIntFromDatetime(dayPicked, timePicked);
+                    print('asss');
+                    print(dateAppointment);
+                    addAppointment(dateAppointment);
+
+                    // getDataAppointment();
                     Navigator.pop(context);
                   },
                   child: const Text('Guardar'),
