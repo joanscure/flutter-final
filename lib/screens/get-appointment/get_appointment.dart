@@ -100,7 +100,7 @@ class GetAppointmentScreen extends StatelessWidget {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
 
       // Hacer la consulta a la colección de mascotas
-      QuerySnapshot querySnapshot = await firestore.collection('pets').where("userId", isEqualTo: userId).get();
+      QuerySnapshot querySnapshot = await firestore.collection('pets').where("userId", isEqualTo: prefs.getString('id')).get();
 
       // Iterar sobre los documentos y crear los ListTile
       List<Widget> listTiles = querySnapshot.docs.map((doc) {

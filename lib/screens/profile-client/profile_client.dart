@@ -63,14 +63,21 @@ class _ProfileClientScreen extends State<ProfileClientScreen> {
         child: Stack(children: [
           Column(
             children: [
+
               SizedBox(
                 height: 200,
                 width: double.infinity,
-                child: Image.asset(
+                child: user['profile']['photoUrl'] != ''
+                    ? Image.network(
+                  user['profile']['photoUrl'],
+                  fit: BoxFit.cover,
+                )
+                    : Image.asset(
                   "assets/perro.jpg",
                   fit: BoxFit.cover,
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: Column(

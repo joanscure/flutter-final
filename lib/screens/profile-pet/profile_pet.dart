@@ -93,14 +93,21 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
         child: Stack(children: [
           Column(
             children: [
+
               SizedBox(
                 height: 200,
                 width: double.infinity,
-                child: Image.asset(
+                child: pet['photoUrl'] != ''
+                    ? Image.network(
+                  pet['photoUrl'],
+                  fit: BoxFit.cover,
+                )
+                    : Image.asset(
                   "assets/profile-pet.jpg",
                   fit: BoxFit.cover,
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(0),
                 child: Column(
