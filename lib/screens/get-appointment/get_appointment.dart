@@ -1,48 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:projectomovilfinal/screens/get-appointment/components/alert_dialog_appointment.dart';
-import 'package:projectomovilfinal/screens/home/home.dart';
-import 'package:projectomovilfinal/screens/profile-client/profile_client.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
-
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'components/request_appointment_button.dart';
-import 'components/select_date.dart';
-import 'components/select_pet_dropdown.dart';
-import 'components/select_time.dart';
 
-final ButtonStyle style = ElevatedButton.styleFrom(textStyle: const TextStyle(fontWeight: FontWeight.bold), backgroundColor: vetPrimaryColor);
-String fechaCita = "";
-String timeCita = "";
-String pet = "";
-
-void addAppointment(String appointmentPet, String appointmentDate, String appointmentTime, BuildContext context) async {
-  await FirebaseFirestore.instance.collection('appointments').add({
-    'pet': appointmentPet,
-    'date': appointmentDate,
-    'time': appointmentTime,
-  }).then((value) => {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => const AlertDialogAppointment(
-          tittle: "Notificación",
-          description: "Su cita fue registrada con éxito",
-        ),
-    ).then((value) => Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return const Home();
-        },
-      ),
-    ))
-  })
-  ;
-}
 
 class GetAppointmentScreen extends StatelessWidget {
+
   const GetAppointmentScreen({super.key});
 
   @override
@@ -110,74 +74,7 @@ class GetAppointmentScreen extends StatelessWidget {
               RequestAppointmentButton(
                 text: "Solicitar cita",
                 onpressed: (){
-                  showCupertinoModalBottomSheet(
-                    expand: true,
-                    context: context,
-                    builder: (context) {
-                      return SingleChildScrollView(
-                        controller: ModalScrollController.of(context),
-                        child: Material(
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.all(30),
-                            child: Column(children: [
-
-                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text("Seleccionar mascota"),
-                                    SelectPetDropdownButton(
-                                      onPetSelected: (String selectedPet) {
-                                        pet = selectedPet;
-                                        print(pet);
-                                      },
-                                    ),
-                                  ]
-                              ),
-
-                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                const Text("Fecha"),
-                                SelectDatelWidget(
-                                  onDateSelected: (DateTime date) {
-                                    fechaCita = "${date.day}/${date.month}/${date.year}";
-                                    print(fechaCita);
-                                  },
-                                ),
-                              ],),
-
-                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                const Text("Hora"),
-                                SelectTimelWidget(
-                                  onTimeSelected: (TimeOfDay time) {
-                                    timeCita = '${time.format(context)}';
-                                    print(timeCita);
-                                  },
-                                ),
-                              ],),
-
-                              Row(
-                                children: [
-                                  ElevatedButton(
-                                    style: style,
-                                  onPressed: () {
-                                      try {
-                                        addAppointment(pet, fechaCita, timeCita, context);
-                                      }
-                                      catch (e) {
-                                        print('Error: $e');
-                                      }
-                                  },
-                                  child: const Text("Registrar cita"),
-                                ),
-                                ],),
-
-                            ],),
-                          ),
-                        ),
-                      );
-                    },
-                  );
+                  showModal(context);
                 },
               ),
             ],),
@@ -186,4 +83,158 @@ class GetAppointmentScreen extends StatelessWidget {
       ),
     );
   }
+
+  void showModal(BuildContext context) {
+    TextEditingController mascotaController = TextEditingController();
+    TextEditingController fechaController = TextEditingController();
+    TextEditingController horaController = TextEditingController();
+
+
+    Future<void> showMascotasModal(BuildContext context) async {
+
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Hacer la consulta a la colección de mascotas
+      QuerySnapshot querySnapshot = await firestore.collection('pets').get();
+
+      // Iterar sobre los documentos y crear los ListTile
+      List<Widget> listTiles = querySnapshot.docs.map((doc) {
+        return ListTile(
+          title: Text(doc.get("name").toString()),
+          onTap: () {
+            mascotaController.text = doc.get("name").toString();
+            Navigator.pop(context);
+          },
+        );
+      }).toList();
+
+      // Mostrar la lista de mascotas en el showModalBottomSheet
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: listTiles,
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Formulario de citas'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+
+                  TextFormField(
+                    controller: mascotaController,
+                    readOnly: true, // Deshabilita la edición
+                    showCursor: false,
+                    decoration: const InputDecoration(
+                      hintText: 'Nombre de la mascota',
+                    ),
+                    onTap: () {
+                      showMascotasModal(context);
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  InkWell(
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2021),
+                        lastDate: DateTime(2025),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          fechaController.text =
+                          "${picked.day}/${picked.month}/${picked.year}";
+                        });
+                      }
+                    },
+                    child: IgnorePointer(
+                      child: TextField(
+                        controller: fechaController,
+                        decoration: const InputDecoration(
+                          hintText: 'Fecha de la cita',
+                        ),
+                      ),
+                    ),
+
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  InkWell(
+                    onTap: () async {
+                      final TimeOfDay? picked = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          horaController.text =
+                          "${picked.hour}:${picked.minute}";
+                        });
+                      }
+                    },
+                    child: IgnorePointer(
+                      child: TextField(
+                        controller: horaController,
+                        decoration: const InputDecoration(
+                          hintText: 'Hora de la cita',
+                        ),
+                      ),
+                    ),
+
+                  ),
+
+                  // TextField(
+                  //   controller: horaController,
+                  //   decoration: const InputDecoration(
+                  //     hintText: 'Hora de la cita',
+                  //   ),
+                  // ),
+
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Aquí se podría agregar la lógica para guardar la cita en la base de datos
+                    print('Mascota: ${mascotaController.text}');
+                    print('Fecha: ${fechaController.text}');
+                    print('Hora: ${horaController.text}');
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Guardar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
 }
