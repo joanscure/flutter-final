@@ -6,80 +6,72 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'components/request_appointment_button.dart';
 
 class GetAppointmentScreen extends StatelessWidget {
-
   const GetAppointmentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-
       appBar: AppBar(
           title: const Text("Citas",
               style: TextStyle(
-                  color: vetTextTitleColor, fontWeight: FontWeight.bold
-              )
-          ),
+                  color: vetTextTitleColor, fontWeight: FontWeight.bold)),
           centerTitle: true,
           backgroundColor: Colors.white,
-          foregroundColor: Colors.black
-      ),
-
+          foregroundColor: Colors.black),
       body: SingleChildScrollView(
-        child: Column(children: [
-
-          SizedBox(
-            height: 200,
-            width: double.infinity,
-            child: Image.asset(
-              "assets/citar.jpg",
-              fit: BoxFit.cover,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: Image.asset(
+                "assets/citar.jpg",
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.all(25),
-            child: Column(children: [
-
-              Container(
-                alignment: Alignment.topCenter,
-                margin: const EdgeInsets.only(bottom: 20),
-                child: const Text(
-                  "¡REGISTRA TU CITA AHORA!",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: vetTextColor),
-                ),
+            Padding(
+              padding: const EdgeInsets.all(25),
+              child: Column(
+                children: [
+                  Container(
+                    alignment: Alignment.topCenter,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    child: const Text(
+                      "¡REGISTRA TU CITA AHORA!",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: vetTextColor),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.topCenter,
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: const Text(
+                      "Rellena el formulario para reservar tu cita de la forma más cómoda y sencilla.",
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, color: vetTextColor),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.topCenter,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    child: const Text(
+                      "Nos pondremos en contacto contigo cuanto antes para confirmarla.",
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, color: vetTextColor),
+                    ),
+                  ),
+                  RequestAppointmentButton(
+                    text: "Solicitar cita",
+                    onpressed: () {
+                      showModal(context);
+                    },
+                  ),
+                ],
               ),
-
-              Container(
-                alignment: Alignment.topCenter,
-                margin: const EdgeInsets.only(bottom: 10),
-                child: const Text(
-                  "Rellena el formulario para reservar tu cita de la forma más cómoda y sencilla.",
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal, color: vetTextColor),
-                ),
-              ),
-
-              Container(
-                alignment: Alignment.topCenter,
-                margin: const EdgeInsets.only(bottom: 20),
-                child: const Text(
-                  "Nos pondremos en contacto contigo cuanto antes para confirmarla.",
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal, color: vetTextColor),
-                ),
-              ),
-
-              RequestAppointmentButton(
-                text: "Solicitar cita",
-                onpressed: (){
-                  showModal(context);
-                },
-              ),
-            ],),
-          ),
-        ],),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -100,7 +92,10 @@ class GetAppointmentScreen extends StatelessWidget {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
 
       // Hacer la consulta a la colección de mascotas
-      QuerySnapshot querySnapshot = await firestore.collection('pets').where("userId", isEqualTo: prefs.getString('id')).get();
+      QuerySnapshot querySnapshot = await firestore
+          .collection('pets')
+          .where("userId", isEqualTo: prefs.getString('id'))
+          .get();
 
       // Iterar sobre los documentos y crear los ListTile
       List<Widget> listTiles = querySnapshot.docs.map((doc) {
@@ -143,28 +138,28 @@ class GetAppointmentScreen extends StatelessWidget {
       return millisecondsSinceEpoch;
     }
 
-    getVet() async{
-      var refVet = await FirebaseFirestore.instance.collection("users").doc(objectID).get();
+    getVet() async {
+      if(objectID == '') return;
+      var refVet = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(objectID)
+          .get();
       vet = refVet.data() as Map<String, dynamic>;
-      print(vet['fullname']);
     }
 
-    void addAppointment(int dateAppointment) async{
-      getVet().then((value) async => {
-        await FirebaseFirestore.instance.collection('appointments').add({
-          'assignedId': objectID,
-          'assignedName': vet['fullname'],
-          'date': dateAppointment,
-          'petId': petId,
-          'petName': mascotaController.text,
-          'userId': userId,
-          'isApproved': false,
-          'isClose':  false,
-          'notes':  "",
-          'reason':  "Cita Programada",
-        })
-      }).then((value) => {
-        print('esta'),
+    void addAppointment(int dateAppointment) async {
+      await getVet();
+      await FirebaseFirestore.instance.collection('appointments').add({
+        'assignedId': objectID ?? '',
+        'assignedName': vet['fullname'] ?? '',
+        'date': dateAppointment,
+        'petId': petId,
+        'petName': mascotaController.text,
+        'userId': userId,
+        'isApproved': false,
+        'isClose': false,
+        'notes': "",
+        'reason': "Cita Programada",
       });
     }
 
@@ -178,7 +173,6 @@ class GetAppointmentScreen extends StatelessWidget {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
                   TextFormField(
                     controller: mascotaController,
                     readOnly: true, // Deshabilita la edición
@@ -190,9 +184,7 @@ class GetAppointmentScreen extends StatelessWidget {
                       showMascotasModal(context);
                     },
                   ),
-
                   const SizedBox(height: 16),
-
                   InkWell(
                     onTap: () async {
                       final DateTime? picked = await showDatePicker(
@@ -204,7 +196,7 @@ class GetAppointmentScreen extends StatelessWidget {
                       if (picked != null) {
                         setState(() {
                           fechaController.text =
-                          "${picked.day}/${picked.month}/${picked.year}";
+                              "${picked.day}/${picked.month}/${picked.year}";
                         });
                       }
                       dayPicked = picked;
@@ -217,11 +209,8 @@ class GetAppointmentScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
                   ),
-
                   const SizedBox(height: 16),
-
                   InkWell(
                     onTap: () async {
                       final TimeOfDay? picked = await showTimePicker(
@@ -231,7 +220,7 @@ class GetAppointmentScreen extends StatelessWidget {
                       if (picked != null) {
                         setState(() {
                           horaController.text =
-                          "${picked.hour}:${picked.minute}";
+                              "${picked.hour}:${picked.minute}";
                         });
                       }
                       timePicked = picked;
@@ -244,9 +233,7 @@ class GetAppointmentScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
                   ),
-
                 ],
               ),
               actions: [
@@ -264,7 +251,8 @@ class GetAppointmentScreen extends StatelessWidget {
                     print('Hora: ${horaController.text}');
                     print(dayPicked);
 
-                    int dateAppointment = getIntFromDatetime(dayPicked, timePicked);
+                    int dateAppointment =
+                        getIntFromDatetime(dayPicked, timePicked);
                     print('asss');
                     print(dateAppointment);
                     addAppointment(dateAppointment);
@@ -281,5 +269,4 @@ class GetAppointmentScreen extends StatelessWidget {
       },
     );
   }
-
 }
