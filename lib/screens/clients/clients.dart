@@ -45,8 +45,12 @@ class _ClientsScreen extends State<ClientsScreen> {
                   snapshot.data!.docs[i].data() as Map<String, dynamic>;
               usuarios.add(ListTile(
                 title: Text(data['fullname']),
-                subtitle: Text(data['email'] + "-" + id),
-                leading: TextButton(
+                subtitle: Text(data['email']),
+                leading:
+                data['profile']['photoUrl'] == '' ?
+                Image.asset("assets/registrar.png") :
+                Image.network(data['profile']['photoUrl']),
+                trailing: TextButton(
                   onPressed: () {
                     objectID = id;
                     context.read<SelectViewModel>().set(Section.PROFILE, "");
@@ -55,8 +59,20 @@ class _ClientsScreen extends State<ClientsScreen> {
                 ),
               ));
             }
+            return Column(
+                children: [
+                  Container(
+                      padding: EdgeInsets.all(10),
+                      child: const Text("Lista de Clientes", style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16.0, color: vetPrimaryColor))
+                  ),
+                  Expanded(
+                      child: ListView(children: [...usuarios])
+                  )
 
-            return ListView(children: [...usuarios]);
+                ]
+            );
+            //return ListView(children: [...usuarios]);
           }),
     );
   }

@@ -48,8 +48,12 @@ class _VetScreen extends State<VetScreen> {
                   snapshot.data!.docs[i].data() as Map<String, dynamic>;
               usuarios.add(ListTile(
                 title: Text(data['fullname']),
-                subtitle: Text(data['email'] + "-" + id),
-                leading: TextButton(
+                subtitle: Text(data['email']),
+                leading:
+                data['profile']['photoUrl'] == '' ?
+                  Image.asset("assets/registrar.png") :
+                  Image.network(data['profile']['photoUrl']),
+                trailing: TextButton(
                   onPressed: () {
                     objectID = id;
                     context.read<SelectViewModel>().set(Section.VET, "");
@@ -59,7 +63,19 @@ class _VetScreen extends State<VetScreen> {
               ));
             }
 
-            return ListView(children: [...usuarios]);
+            return Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: const Text("Lista de Veterinarios", style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16.0, color: vetPrimaryColor))
+                ),
+                Expanded(
+                  child: ListView(children: [...usuarios])
+                )
+
+              ]
+            );
           }),
     );
   }
