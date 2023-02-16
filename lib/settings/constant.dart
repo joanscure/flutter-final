@@ -49,6 +49,7 @@ const vetTextColor = Color(0xFF4f5e71);
 const vetTextTitleColor = Color(0xFF252a31);
 
 const vetAnimationDuration = Duration(milliseconds: 200);
+Map<String, dynamic> objectHistory = {};
 
 final headingStyle = TextStyle(
   fontSize: getProportionateScreenWidth(28),

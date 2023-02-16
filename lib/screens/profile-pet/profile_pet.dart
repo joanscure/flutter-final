@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:projectomovilfinal/notifier/view-model.dart';
+import 'package:projectomovilfinal/screens/profile-pet/modal-history.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 
 import 'package:provider/provider.dart';
+
 class ProfilePetScreen extends StatefulWidget {
   const ProfilePetScreen({super.key});
 
@@ -29,6 +31,8 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
     var refPet =
         await FirebaseFirestore.instance.collection("pets").doc(objectID).get();
     pet = refPet.data() as Map<String, dynamic>;
+
+    pet['age'] = calcularEdad(pet);
 
     var eventRef = await FirebaseFirestore.instance
         .collection("pets")
@@ -93,21 +97,19 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
         child: Stack(children: [
           Column(
             children: [
-
               SizedBox(
                 height: 200,
                 width: double.infinity,
                 child: pet['photoUrl'] != ''
                     ? Image.network(
-                  pet['photoUrl'],
-                  fit: BoxFit.cover,
-                )
+                        pet['photoUrl'],
+                        fit: BoxFit.cover,
+                      )
                     : Image.asset(
-                  "assets/profile-pet.jpg",
-                  fit: BoxFit.cover,
-                ),
+                        "assets/profile-pet.png",
+                        fit: BoxFit.cover,
+                      ),
               ),
-
               Padding(
                 padding: const EdgeInsets.all(0),
                 child: Column(
@@ -152,13 +154,37 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
                                   String date =
                                       DateFormat('yyyy-MM-dd').format(now);
                                   return ListTile(
-                                      trailing: const Text(
-                                        "Ver Detalle",
-                                        style: TextStyle(
-                                            color: vetSecondaryColor,
-                                            fontSize: 15),
-                                      ),
-                                      title: Text("$date - ${item['reason']}"));
+                                      contentPadding: EdgeInsets.all(10.0),
+                                      trailing: TextButton(
+                                          onPressed: () {
+                                            objectHistory = item;
+
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        const ModalHistory()));
+                                          },
+                                          child: const Text(
+                                            "Ver Detalle",
+                                            style: TextStyle(
+                                                color: vetSecondaryColor,
+                                                fontSize: 15),
+                                          )),
+                                      title: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text("${item['reason']}",
+                                              style: const TextStyle(
+                                                  color: vetTextColor,
+                                                  fontWeight: FontWeight.bold)),
+                                          Text("$date"),
+                                        ],
+                                      ));
                                 })
                               ]);
                             }).toList()),
@@ -213,7 +239,7 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
                           Text.rich(
                             TextSpan(text: "Edad: ", children: [
                               TextSpan(
-                                text: "---",
+                                text: pet['age'],
                                 style: TextStyle(
                                     color: vetTextColor,
                                     fontWeight: FontWeight.bold),
@@ -229,5 +255,41 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
         ]),
       ),
     );
+  }
+
+  calcularEdad(item) {
+    var nacimiento = DateTime.fromMillisecondsSinceEpoch(item['birthdate']);
+    var fechaActual = DateTime.now();
+
+    var dayAc = fechaActual.day;
+    var monthAc = fechaActual.month;
+    var yearAc = fechaActual.year;
+
+    var year = 0;
+    var month = 0;
+    var day = 0;
+
+    if (dayAc - nacimiento.day >= 0) {
+      day = (dayAc - nacimiento.day);
+    } else {
+      day = (dayAc + 30 - nacimiento.day);
+      monthAc--;
+    }
+
+    if (monthAc - nacimiento.month >= 0) {
+      month = (monthAc - nacimiento.month);
+    } else {
+      month = monthAc + 12 - nacimiento.month;
+      yearAc--;
+    }
+
+    year = yearAc - nacimiento.year;
+
+    var monthString = month == 1 ? 'mes' : 'meses';
+    var dayString = day == 1 ? 'dia' : 'dias';
+    var yearString = year == 1 ? 'año' : 'años';
+    var completeYear = year != 0 ? "$year $yearString, " : '';
+
+    return '$completeYear $month $monthString y $day $dayString';
   }
 }

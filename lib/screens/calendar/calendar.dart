@@ -4,9 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:projectomovilfinal/models/event.dart';
+import 'package:projectomovilfinal/models/user.dart';
+import 'package:projectomovilfinal/notifier/user-notifier.dart';
 import 'package:projectomovilfinal/screens/calendar/calendar.service.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import 'package:provider/provider.dart';
 
 class CalendarScreen extends StatefulWidget {
   @override
@@ -26,13 +30,18 @@ class _CalendarScreen extends State<CalendarScreen> {
     equals: isSameDay,
     hashCode: getHashCode,
   );
+  List<Map<String, dynamic>> users = [];
+
+  late UserLocal user = context.read<UserNotifier>().user;
 
   @override
   void initState() {
     super.initState();
+    user = context.read<UserNotifier>().user;
 
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    getUsers();
   }
 
   @override
@@ -41,11 +50,33 @@ class _CalendarScreen extends State<CalendarScreen> {
     super.dispose();
   }
 
+  getUsers() async {
+    print("asdasd");
+    var refClients = await FirebaseFirestore.instance
+        .collection("users")
+        .where('isClient', isEqualTo: true)
+        .get();
+
+    List<Map<String, dynamic>> usersTemp = [];
+    refClients.docs.forEach((element) {
+      usersTemp.add({...element.data(), 'id': element.id});
+    });
+    setState(() {
+      print(usersTemp.length);
+      users = usersTemp;
+    });
+  }
+
   getAppointments() {
-    print(objectID);
+    if (user.isClient)
+      return FirebaseFirestore.instance
+          .collection("appointments")
+          .where("userId", isEqualTo: objectID)
+          .snapshots();
+
     return FirebaseFirestore.instance
         .collection("appointments")
-        .where("userId", isEqualTo: objectID)
+        .where("assignedId", isEqualTo: objectID)
         .snapshots();
   }
 
@@ -96,6 +127,12 @@ class _CalendarScreen extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (users.isEmpty) {
+      return Center(
+        child: Text("Cargando"),
+      );
+    }
+
     return StreamBuilder(
         stream: getAppointments(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -119,15 +156,26 @@ class _CalendarScreen extends State<CalendarScreen> {
                 snapshot.data!.docs[i].data() as Map<String, dynamic>;
             var time = f.format(
                 DateTime.fromMillisecondsSinceEpoch(data['date'] * 1000));
+            var otherUser = '';
+            if (user.isClient) {
+              otherUser = data['assignedName'] != ''
+                  ? data['assignedName']
+                  : 'No asignado aun';
+            } else {
+              print(users);
+
+              print(data['userId']);
+              users.forEach((element) {
+                if (element['id'] == data['userId']) {
+                  otherUser = element['fullname'];
+                  return;
+                }
+              });
+            }
             _kEventSource.addAll({
               DateTime.fromMillisecondsSinceEpoch(data['date']): [
-                Event(
-                    data['reason'],
-                    data['assignedName'] != ''
-                        ? data['assignedName']
-                        : 'No asignado aun',
-                    time,
-                    data['notes'], data['petName'])
+                Event(data['reason'], otherUser, time,
+                    data['notes'] != '' ? data['notes'] : '--', data['petName'])
               ]
             });
           }
@@ -175,6 +223,10 @@ class _CalendarScreen extends State<CalendarScreen> {
                     return ListView.builder(
                       itemCount: value.length,
                       itemBuilder: (context, index) {
+                        var text = user.isClient
+                            ? "Mascota: ${value[index].pet}\nHora: ${value[index].time} \nVeterinario: ${value[index].vet}\nNotas: ${value[index].notes}"
+                            : "Mascota: ${value[index].pet}\nHora: ${value[index].time} \nCliente: ${value[index].vet}\nNotas: ${value[index].notes}";
+
                         return Container(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12.0,
@@ -187,8 +239,7 @@ class _CalendarScreen extends State<CalendarScreen> {
                           child: ListTile(
                             onTap: () => print('${value[index]}'),
                             title: Text('${value[index].title}'),
-                            subtitle: Text(
-                                "Mascota: ${value[index].pet}\nHora: ${value[index].time} \nVeterinario: ${value[index].vet}\nNotas: ${value[index].notes}"),
+                            subtitle: Text(text),
                           ),
                         );
                       },
