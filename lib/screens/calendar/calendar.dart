@@ -51,7 +51,6 @@ class _CalendarScreen extends State<CalendarScreen> {
   }
 
   getUsers() async {
-    print("asdasd");
     var refClients = await FirebaseFirestore.instance
         .collection("users")
         .where('isClient', isEqualTo: true)

@@ -2,6 +2,7 @@ import 'package:awesome_bottom_bar/widgets/inspired/inspired.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/notifier/title-notifier.dart';
 import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 
@@ -18,6 +19,11 @@ class _ClientsScreen extends State<ClientsScreen> {
   int visit = 0;
   getUser() {
     return FirebaseFirestore.instance.collection("users").where("isClient", isEqualTo: true).snapshots();
+  }
+  @override
+  void initState() {
+    super.initState();
+    context.read<TitleNotifier>().set("Patita Feliz");
   }
 
   @override
@@ -48,7 +54,7 @@ class _ClientsScreen extends State<ClientsScreen> {
                 subtitle: Text(data['email']),
                 leading:
                 data['profile']['photoUrl'] == '' ?
-                Image.asset("assets/registrar.png") :
+                Image.asset("assets/profile-client.jpg") :
                 Image.network(data['profile']['photoUrl']),
                 trailing: TextButton(
                   onPressed: () {

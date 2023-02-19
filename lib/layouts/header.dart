@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/notifier/title-notifier.dart';
 import 'package:projectomovilfinal/screens/auth/login.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 
@@ -20,8 +21,10 @@ class HeaderApp extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<HeaderApp> {
   @override
   Widget build(BuildContext context) {
+
+    var title = context.read<TitleNotifier>().title;
     return AppBar(
-      title: Text("Patita Feliz", style: const TextStyle(fontSize: 25)),
+      title: Text(title, style: const TextStyle(fontSize: 25)),
       centerTitle: true,
       backgroundColor: vetPrimaryColor,
       actions: <Widget>[getIconSession()],

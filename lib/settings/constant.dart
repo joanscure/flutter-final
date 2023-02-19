@@ -1,5 +1,6 @@
 import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/models/chatObject.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 
 enum ColorsAppEnum {
@@ -60,6 +61,7 @@ final headingStyle = TextStyle(
 
 const defaultDuration = Duration(milliseconds: 250);
 String objectID = '';
+ChatObject chatObject = ChatObject(id: "", clientId: "", clientName: "", photoUrl: "");
 
 const List<TabItem> itemsTab = [
   TabItem(
@@ -79,6 +81,8 @@ const List<TabItem> itemsTab = [
 enum Section {
   HOME,
   CHAT,
+  CHATLIST,
+  CHATADMIN,
   VET,
   LISTVET,
   LiSTCUSTOMER,

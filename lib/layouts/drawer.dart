@@ -80,16 +80,23 @@ class _DrawerModelState extends State<DrawerModel> {
             Navigator.pop(context);
           }));
     }
-    if (user.isClient) {
+    if (user.isClient || user.isAdmin) {
       listOptions.add(
         ListTile(
             leading: const Icon(Icons.question_answer),
             title: const Text('Chat'),
             onTap: () {
-              context.read<SelectViewModel>().set(Section.CHAT, "");
+              if (user.isClient) {
+                context.read<SelectViewModel>().set(Section.CHAT, "");
+              } else {
+
+                context.read<SelectViewModel>().set(Section.CHATLIST, "");
+              }
               Navigator.pop(context);
             }),
       );
+    }
+    if (user.isClient) {
       listOptions.add(
         ListTile(
             leading: const Icon(Icons.question_answer),

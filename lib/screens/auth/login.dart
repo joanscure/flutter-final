@@ -44,6 +44,7 @@ class _LoginFormState extends State<LoginForm> {
         prefs.setString("name", data['fullname']);
         prefs.setBool("isAdmin", data['isAdmin']);
         prefs.setBool("isClient", data['isClient'] ? true : false);
+        prefs.setString("photoUrl", data['profile']['photoUrl']);
 
         context.read<SelectViewModel>().set(Section.LISTVET, "");
         Navigator.pushReplacementNamed(context, Home.routeName);

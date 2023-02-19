@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:projectomovilfinal/notifier/view-model.dart';
+import 'package:projectomovilfinal/notifier/title-notifier.dart';
 import 'package:projectomovilfinal/screens/profile-pet/modal-history.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
@@ -65,6 +65,8 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
     _controller = TabController(length: 2, vsync: this);
     loading = true;
     getPet();
+
+    context.read<TitleNotifier>().set("Detalle de mascota");
   }
 
   @override
@@ -76,184 +78,164 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_circle_left),
-            tooltip: 'Atras',
-            onPressed: () {
-              objectID = pet['userId'];
-
-              context.read<SelectViewModel>().set(Section.PROFILE, "");
-            },
-          ),
-          title: const Text("Detalle de Mascota",
-              style: TextStyle(
-                  color: vetTextTitleColor, fontWeight: FontWeight.bold)),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black),
-      body: SingleChildScrollView(
-        child: Stack(children: [
-          Column(
-            children: [
-              SizedBox(
-                height: 200,
-                width: double.infinity,
-                child: pet['photoUrl'] != ''
-                    ? Image.network(
-                        pet['photoUrl'],
-                        fit: BoxFit.cover,
-                      )
-                    : Image.asset(
-                        "assets/profile-pet.png",
-                        fit: BoxFit.cover,
-                      ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 80),
-                    Container(
-                      decoration: BoxDecoration(color: vetColorOrange),
-                      child: TabBar(
-                        labelColor: vetTextTitleColor,
-                        indicatorColor: vetPrimaryColor,
-                        controller: _controller,
-                        tabs: petTabs,
-                      ),
+    return SingleChildScrollView(
+      child: Stack(children: [
+        Column(
+          children: [
+            SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: pet['photoUrl'] != ''
+                  ? Image.network(
+                      pet['photoUrl'],
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      "assets/profile-pet.png",
+                      fit: BoxFit.cover,
                     ),
-                    Container(
-                      height: double.maxFinite,
-                      child: Container(
-                        width: SizeConfig.screenWidth,
-                        child: TabBarView(
-                            controller: _controller,
-                            children: petTabs.map((Tab tab) {
-                              final String label = tab.text!.toLowerCase();
-                              if (label == 'eventos') {
-                                return ListView(children: [
-                                  ...events.map((item) {
-                                    DateTime now =
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                            item['date']);
-                                    String date =
-                                        DateFormat('yyyy-MM-dd').format(now);
-                                    return ListTile(
-                                        title: Text(
-                                            "${date} - ${item['reason']}"));
-                                  })
-                                ]);
-                              }
+            ),
+            Padding(
+              padding: const EdgeInsets.all(0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 80),
+                  Container(
+                    decoration: const BoxDecoration(color: vetColorOrange),
+                    child: TabBar(
+                      labelColor: vetTextTitleColor,
+                      indicatorColor: vetPrimaryColor,
+                      controller: _controller,
+                      tabs: petTabs,
+                    ),
+                  ),
+                  SizedBox(
+                    height: double.maxFinite,
+                    child: SizedBox(
+                      width: SizeConfig.screenWidth,
+                      child: TabBarView(
+                          controller: _controller,
+                          children: petTabs.map((Tab tab) {
+                            final String label = tab.text!.toLowerCase();
+                            if (label == 'eventos') {
                               return ListView(children: [
-                                ...histories.map((item) {
+                                ...events.map((item) {
                                   DateTime now =
                                       DateTime.fromMillisecondsSinceEpoch(
                                           item['date']);
                                   String date =
                                       DateFormat('yyyy-MM-dd').format(now);
                                   return ListTile(
-                                      contentPadding: EdgeInsets.all(10.0),
-                                      trailing: TextButton(
-                                          onPressed: () {
-                                            objectHistory = item;
-
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        const ModalHistory()));
-                                          },
-                                          child: const Text(
-                                            "Ver Detalle",
-                                            style: TextStyle(
-                                                color: vetSecondaryColor,
-                                                fontSize: 15),
-                                          )),
-                                      title: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text("${item['reason']}",
-                                              style: const TextStyle(
-                                                  color: vetTextColor,
-                                                  fontWeight: FontWeight.bold)),
-                                          Text("$date"),
-                                        ],
-                                      ));
+                                      title:
+                                          Text("${date} - ${item['reason']}"));
                                 })
                               ]);
-                            }).toList()),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            top: 150,
-            child: SizedBox(
-                width: SizeConfig.screenWidth,
-                child: Card(
-                  shadowColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  margin: const EdgeInsets.all(15),
-                  elevation: 5,
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.fromLTRB(15, 10, 25, 0),
-                    title: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                      child: Text(pet['name'],
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: vetTextColor)),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            pet['petType'],
-                            style: TextStyle(color: vetTextColor),
-                          ),
-                          Text.rich(
-                            TextSpan(text: "Raza: ", children: [
-                              TextSpan(
-                                text: pet['breed'],
-                                style: TextStyle(
-                                    color: vetTextColor,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ]),
-                          ),
-                          Text.rich(
-                            TextSpan(text: "Edad: ", children: [
-                              TextSpan(
-                                text: pet['age'],
-                                style: TextStyle(
-                                    color: vetTextColor,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ]),
-                          ),
-                        ],
-                      ),
+                            }
+                            return ListView(children: [
+                              ...histories.map((item) {
+                                DateTime now =
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                        item['date']);
+                                String date =
+                                    DateFormat('yyyy-MM-dd').format(now);
+                                return ListTile(
+                                    contentPadding: EdgeInsets.all(10.0),
+                                    trailing: TextButton(
+                                        onPressed: () {
+                                          objectHistory = item;
+
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      const ModalHistory()));
+                                        },
+                                        child: const Text(
+                                          "Ver Detalle",
+                                          style: TextStyle(
+                                              color: vetSecondaryColor,
+                                              fontSize: 15),
+                                        )),
+                                    title: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text("${item['reason']}",
+                                            style: const TextStyle(
+                                                color: vetTextColor,
+                                                fontWeight: FontWeight.bold)),
+                                        Text("$date"),
+                                      ],
+                                    ));
+                              })
+                            ]);
+                          }).toList()),
                     ),
                   ),
-                )),
-          ),
-        ]),
-      ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+          top: 150,
+          child: SizedBox(
+              width: SizeConfig.screenWidth,
+              child: Card(
+                shadowColor: Colors.grey,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                margin: const EdgeInsets.all(15),
+                elevation: 5,
+                child: ListTile(
+                  contentPadding: const EdgeInsets.fromLTRB(15, 10, 25, 0),
+                  title: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                    child: Text(pet['name'],
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: vetTextColor)),
+                  ),
+                  subtitle: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          pet['petType'],
+                          style: const TextStyle(color: vetTextColor),
+                        ),
+                        Text.rich(
+                          TextSpan(text: "Raza: ", children: [
+                            TextSpan(
+                              text: pet['breed'],
+                              style: const TextStyle(
+                                  color: vetTextColor,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ]),
+                        ),
+                        Text.rich(
+                          TextSpan(text: "Edad: ", children: [
+                            TextSpan(
+                              text: pet['age'],
+                              style: const TextStyle(
+                                  color: vetTextColor,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ]),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )),
+        ),
+      ]),
     );
   }
 

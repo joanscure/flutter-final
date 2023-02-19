@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/notifier/title-notifier.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'components/request_appointment_button.dart';
+
+import 'package:provider/provider.dart';
 
 class GetAppointmentScreen extends StatelessWidget {
   const GetAppointmentScreen({super.key});
@@ -11,15 +14,10 @@ class GetAppointmentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
-      appBar: AppBar(
-          title: const Text("Citas",
-              style: TextStyle(
-                  color: vetTextTitleColor, fontWeight: FontWeight.bold)),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black),
-      body: SingleChildScrollView(
+
+    context.read<TitleNotifier>().set("Solicita tu cita");
+    return 
+      SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -72,8 +70,7 @@ class GetAppointmentScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 
   void showModal(BuildContext context) {

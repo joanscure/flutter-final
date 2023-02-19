@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:projectomovilfinal/notifier/title-notifier.dart';
 import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
@@ -23,8 +24,6 @@ class _ProfileVetScreen extends State<ProfileVetScreen> {
         .doc(objectID)
         .get();
     user = refUser.data() as Map<String, dynamic>;
-    // String imageUrl = user['profile']['photoUrl'];
-    print(user['profile']['photoUrl']);
     setState(() {
       loading = false;
     });
@@ -35,6 +34,7 @@ class _ProfileVetScreen extends State<ProfileVetScreen> {
     super.initState();
     loading = true;
     getUser();
+    context.read<TitleNotifier>().set("Detalle de veterinario");
   }
 
 
@@ -47,15 +47,7 @@ class _ProfileVetScreen extends State<ProfileVetScreen> {
         child: CircularProgressIndicator(),
       );
     }
-    return Scaffold(
-      appBar: AppBar(
-          title: const Text("Detalle de Veterinario",
-              style: TextStyle(
-                  color: vetTextTitleColor, fontWeight: FontWeight.bold)),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black),
-      body: SingleChildScrollView(
+    return  SingleChildScrollView(
         child: Stack(children: [
           Column(
             children: [
@@ -237,7 +229,6 @@ class _ProfileVetScreen extends State<ProfileVetScreen> {
                 )),
           ),
         ]),
-      ),
-    );
+      );
   }
 }

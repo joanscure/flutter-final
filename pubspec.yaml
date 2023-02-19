@@ -48,6 +48,7 @@ dependencies:
   shared_preferences: ^2.0.17
   flutter_easyloading: ^3.0.5
   table_calendar: ^3.0.8
+  timeago: ^3.3.0
 
 
 dev_dependencies:

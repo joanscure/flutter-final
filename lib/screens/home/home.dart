@@ -9,6 +9,8 @@ import 'package:projectomovilfinal/notifier/user-notifier.dart';
 import 'package:projectomovilfinal/notifier/view-model.dart';
 import 'package:projectomovilfinal/screens/calendar/calendar.dart';
 import 'package:projectomovilfinal/screens/chat-client/chat-client.dart';
+import 'package:projectomovilfinal/screens/chat-list/clients.dart';
+import 'package:projectomovilfinal/screens/chat-vet/chat-vet.dart';
 import 'package:projectomovilfinal/screens/clients/clients.dart';
 import 'package:projectomovilfinal/screens/get-appointment/get_appointment.dart';
 import 'package:projectomovilfinal/screens/profile-client/profile_client.dart';
@@ -33,6 +35,7 @@ class _Home extends State<Home> {
     String id = prefs.getString("id") ?? '';
     String email = prefs.getString("email") ?? '';
     String name = prefs.getString("name") ?? '';
+    String photoUrl = prefs.getString("photoUrl") ?? '';
     bool isAdmin = prefs.getBool("isAdmin") ?? false;
     bool isClient = prefs.getBool("isClient") ?? true;
 
@@ -41,7 +44,9 @@ class _Home extends State<Home> {
         email: email,
         name: name,
         isAdmin: isAdmin,
-        isClient: isClient));
+        isClient: isClient,
+        photoUrl: photoUrl
+        ));
   }
 
   @override
@@ -58,6 +63,10 @@ class _Home extends State<Home> {
       case Section.CHAT:
         bodyContent = ChatClient();
         break;
+      case Section.CHATLIST:
+        bodyContent = ChatListClientsScreen();
+        break;
+
       case Section.PROFILE:
         bodyContent = const ProfileClientScreen();
         break;
