@@ -38,6 +38,7 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
         .collection("pets")
         .doc(objectID)
         .collection("events")
+        .orderBy("date", descending: true)
         .get();
 
     eventRef.docs.forEach((item) {
@@ -48,7 +49,7 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
         .collection("pets")
         .doc(objectID)
         .collection("histories")
-        .get();
+        .orderBy("date", descending: true).get();
 
     historyRef.docs.forEach((item) {
       histories.add({...item.data(), "id": item.id});
@@ -77,6 +78,32 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
         child: CircularProgressIndicator(),
       );
     }
+    Color color;
+    Color bg;
+pet['status'] = pet['status'] == null ? 'SALUDABLE' : pet['status'];
+
+    switch (pet['status']) {
+      case 'INTERNADO/EMERGENCIA':
+        color = Colors.white;
+        bg = const Color.fromRGBO(220, 53, 69, 1);
+        break;
+      case 'TRATAMIENTO':
+        color = Colors.black;
+        bg = const Color.fromRGBO(255, 193, 7, 1);
+        break;
+      case 'EN OBSERVACION':
+        color = Colors.white;
+        bg = Color.fromRGBO(13, 110, 253, 1);
+        break;
+
+      case 'SALUDABLE':
+        bg = const Color.fromRGBO(25, 135, 84, 1);
+        color = Colors.white;
+        break;
+      default:
+        bg = const Color.fromRGBO(25, 135, 84, 1);
+        color = Colors.white;
+    }
 
     return SingleChildScrollView(
       child: Stack(children: [
@@ -99,7 +126,7 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
               padding: const EdgeInsets.all(0),
               child: Column(
                 children: [
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 100),
                   Container(
                     decoration: const BoxDecoration(color: vetColorOrange),
                     child: TabBar(
@@ -143,6 +170,8 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
                                     trailing: TextButton(
                                         onPressed: () {
                                           objectHistory = item;
+                                          objectHistory['status'] =
+                                              pet['status'];
 
                                           Navigator.push(
                                               context,
@@ -191,12 +220,30 @@ class _ProfilePetScreen extends State<ProfilePetScreen>
                 margin: const EdgeInsets.all(15),
                 elevation: 5,
                 child: ListTile(
-                  contentPadding: const EdgeInsets.fromLTRB(15, 10, 25, 0),
+                  contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
                   title: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    child: Text(pet['name'],
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: vetTextColor)),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(pet['name'],
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: vetTextColor)),
+                          TextButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll<Color>(bg)),
+                            onPressed: () => {},
+                            child: Text(pet['status'],
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: color,
+                                    backgroundColor: bg)),
+                          ),
+                        ]),
                   ),
                   subtitle: Padding(
                     padding:

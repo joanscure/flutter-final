@@ -13,6 +13,12 @@ class ModalHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
+    DateTime now =
+        DateTime.fromMillisecondsSinceEpoch(
+            objectHistory['date']);
+    String date =
+        DateFormat('yyyy-MM-dd').format(now);
     return Scaffold(
       appBar: AppBar(
           leading: IconButton(
@@ -35,6 +41,46 @@ class ModalHistory extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+              const Text(
+                "Estado de la mascota",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+
+              Row(children: [
+                Text(
+                  "\u2022",
+                ), //bullet text
+                SizedBox(
+                  width: 10,
+                ), //space between bullet and text
+                Expanded(
+                  child: Text(
+                    objectHistory['status'],
+                  ), //text
+                )
+              ]),
+const Text(
+                "Fecha",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+
+              Row(children: [
+                Text(
+                  "\u2022",
+                ), //bullet text
+                SizedBox(
+                  width: 10,
+                ), //space between bullet and text
+                Expanded(
+                  child: Text(
+                    date,
+                  ), //text
+                )
+              ]),
+              Container(
+                padding: EdgeInsets.all(10),
+                ),
               const Text(
                 "Motivo de la consulta",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

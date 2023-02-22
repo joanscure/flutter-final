@@ -5,8 +5,6 @@ import 'package:projectomovilfinal/models/user.dart';
 import 'package:projectomovilfinal/notifier/title-notifier.dart';
 import 'package:projectomovilfinal/notifier/user-notifier.dart';
 import 'package:projectomovilfinal/screens/chat/components/data.dart';
-import 'package:projectomovilfinal/screens/chat/components/quick_replies.dart';
-import 'package:projectomovilfinal/settings/constant.dart';
 
 import 'package:provider/provider.dart';
 
