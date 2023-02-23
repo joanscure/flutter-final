@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:projectomovilfinal/models/event.dart';
 import 'package:projectomovilfinal/models/user.dart';
+import 'package:projectomovilfinal/notifier/title-notifier.dart';
 import 'package:projectomovilfinal/notifier/user-notifier.dart';
 import 'package:projectomovilfinal/screens/calendar/calendar.service.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
@@ -41,6 +42,7 @@ class _CalendarScreen extends State<CalendarScreen> {
 
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    context.read<TitleNotifier>().set("Calendario");
     getUsers();
   }
 
@@ -149,8 +151,11 @@ class _CalendarScreen extends State<CalendarScreen> {
           Map<DateTime, List<Event>> _kEventSource = {};
 
           final f = DateFormat('hh:mm');
+          List<int> whiteList = [];
 
           for (var i = 0; i < size; i++) {
+
+            if (whiteList.contains(i)) continue;
             Map<String, dynamic> data =
                 snapshot.data!.docs[i].data() as Map<String, dynamic>;
             var time = f.format(
@@ -161,9 +166,6 @@ class _CalendarScreen extends State<CalendarScreen> {
                   ? data['assignedName']
                   : 'No asignado aun';
             } else {
-              print(users);
-
-              print(data['userId']);
               users.forEach((element) {
                 if (element['id'] == data['userId']) {
                   otherUser = element['fullname'];
@@ -171,11 +173,53 @@ class _CalendarScreen extends State<CalendarScreen> {
                 }
               });
             }
+            String status = data['isClose'] == true && data['isApproved'] == true ? 'Completado' : data['isClose'] == false && data['isApproved'] == false ? 'Cancelado': 'Pendiente';
+            List<Event> events = [
+              Event(data['reason'], otherUser, time,
+                  data['notes'] != '' ? data['notes'] : '--', data['petName'], status),
+            ];
+            print(data);
+            for (var j = i + 1; j < size; j++) {
+              if (whiteList.contains(j)) continue;
+
+              Map<String, dynamic> dataTwo =
+                  snapshot.data!.docs[j].data() as Map<String, dynamic>;
+              var dateTwo =
+                  DateTime.fromMillisecondsSinceEpoch(dataTwo['date']);
+              var date = DateTime.fromMillisecondsSinceEpoch(data['date']);
+
+              if (dateTwo.year == date.year &&
+                  dateTwo.month == date.month &&
+                  dateTwo.day == date.day) {
+                whiteList.add(j);
+                var timeTwo = f.format(DateTime.fromMillisecondsSinceEpoch(
+                    dataTwo['date'] * 1000));
+                var otherUserTwo = '';
+                if (user.isClient) {
+                  otherUserTwo = dataTwo['assignedName'] != ''
+                      ? dataTwo['assignedName']
+                      : 'No asignado aun';
+                } else {
+                  users.forEach((element) {
+                    if (element['id'] == dataTwo['userId']) {
+                      otherUserTwo = element['fullname'];
+                      return;
+                    }
+                  });
+                }
+
+            String statusTwo = dataTwo['isClose'] == true && dataTwo['isApproved'] == true ? 'Completado' : dataTwo['isClose'] == false && dataTwo['isApproved'] == false ? 'Cancelado': 'Pendiente';
+
+                events.add(Event(
+                    dataTwo['reason'],
+                    otherUserTwo,
+                    timeTwo,
+                    dataTwo['notes'] != '' ? dataTwo['notes'] : '--',
+                    dataTwo['petName'],statusTwo));
+              }
+            }
             _kEventSource.addAll({
-              DateTime.fromMillisecondsSinceEpoch(data['date']): [
-                Event(data['reason'], otherUser, time,
-                    data['notes'] != '' ? data['notes'] : '--', data['petName'])
-              ]
+              DateTime.fromMillisecondsSinceEpoch(data['date']): [...events]
             });
           }
 
@@ -219,12 +263,13 @@ class _CalendarScreen extends State<CalendarScreen> {
                 child: ValueListenableBuilder<List<Event>>(
                   valueListenable: _selectedEvents,
                   builder: (context, value, _) {
+                    print(value.length);
                     return ListView.builder(
                       itemCount: value.length,
                       itemBuilder: (context, index) {
                         var text = user.isClient
-                            ? "Mascota: ${value[index].pet}\nHora: ${value[index].time} \nVeterinario: ${value[index].vet}\nNotas: ${value[index].notes}"
-                            : "Mascota: ${value[index].pet}\nHora: ${value[index].time} \nCliente: ${value[index].vet}\nNotas: ${value[index].notes}";
+                            ? "Mascota: ${value[index].pet}\nHora: ${value[index].time} \nVeterinario: ${value[index].vet}\nNotas: ${value[index].notes}\nEstado: ${value[index].status}"
+                            : "Mascota: ${value[index].pet}\nHora: ${value[index].time} \nCliente: ${value[index].vet}\nNotas: ${value[index].notes}\nEstado: ${value[index].status}";
 
                         return Container(
                           margin: const EdgeInsets.symmetric(

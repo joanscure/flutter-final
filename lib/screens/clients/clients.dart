@@ -55,7 +55,7 @@ class _ClientsScreen extends State<ClientsScreen> {
                 leading:
                 data['profile']['photoUrl'] == '' ?
                 Image.asset("assets/profile-client.jpg") :
-                Image.network(data['profile']['photoUrl']),
+                Image.network(data['profile']['photoUrl'], width: 80),
                 trailing: TextButton(
                   onPressed: () {
                     objectID = id;

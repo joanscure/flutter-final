@@ -53,6 +53,7 @@ class _DrawerModelState extends State<DrawerModel> {
               leading: const Icon(Icons.home),
               title: const Text('Inicio'),
               onTap: () {
+                context.read<SelectViewModel>().set(Section.HOME, "");
                 Navigator.pop(context);
               }),
           ListTile(

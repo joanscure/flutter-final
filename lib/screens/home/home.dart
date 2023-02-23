@@ -12,6 +12,7 @@ import 'package:projectomovilfinal/screens/chat-client/chat-client.dart';
 import 'package:projectomovilfinal/screens/chat-list/clients.dart';
 import 'package:projectomovilfinal/screens/chat-vet/chat-vet.dart';
 import 'package:projectomovilfinal/screens/clients/clients.dart';
+import 'package:projectomovilfinal/screens/dashboard/dashboard.dart';
 import 'package:projectomovilfinal/screens/get-appointment/get_appointment.dart';
 import 'package:projectomovilfinal/screens/profile-client/profile_client.dart';
 import 'package:projectomovilfinal/screens/profile-pet/profile_pet.dart';
@@ -60,6 +61,10 @@ class _Home extends State<Home> {
     var section = Provider.of<SelectViewModel>(context).selectView;
     Widget bodyContent = const SizedBox();
     switch (section) {
+
+      case Section.HOME:
+        bodyContent = Dashboard();
+        break;
       case Section.CHAT:
         bodyContent = ChatClient();
         break;

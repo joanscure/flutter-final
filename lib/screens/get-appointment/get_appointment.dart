@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:projectomovilfinal/notifier/title-notifier.dart';
 import 'package:projectomovilfinal/settings/constant.dart';
 import 'package:projectomovilfinal/settings/size.dart';
@@ -16,61 +17,60 @@ class GetAppointmentScreen extends StatelessWidget {
     SizeConfig().init(context);
 
     context.read<TitleNotifier>().set("Solicita tu cita");
-    return 
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 200,
-              width: double.infinity,
-              child: Image.asset(
-                "assets/citar.jpg",
-                fit: BoxFit.cover,
-              ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 200,
+            width: double.infinity,
+            child: Image.asset(
+              "assets/citar.jpg",
+              fit: BoxFit.cover,
             ),
-            Padding(
-              padding: const EdgeInsets.all(25),
-              child: Column(
-                children: [
-                  Container(
-                    alignment: Alignment.topCenter,
-                    margin: const EdgeInsets.only(bottom: 20),
-                    child: const Text(
-                      "¡REGISTRA TU CITA AHORA!",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: vetTextColor),
-                    ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(25),
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.topCenter,
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: const Text(
+                    "¡REGISTRA TU CITA AHORA!",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: vetTextColor),
                   ),
-                  Container(
-                    alignment: Alignment.topCenter,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    child: const Text(
-                      "Rellena el formulario para reservar tu cita de la forma más cómoda y sencilla.",
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, color: vetTextColor),
-                    ),
+                ),
+                Container(
+                  alignment: Alignment.topCenter,
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: const Text(
+                    "Rellena el formulario para reservar tu cita de la forma más cómoda y sencilla.",
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal, color: vetTextColor),
                   ),
-                  Container(
-                    alignment: Alignment.topCenter,
-                    margin: const EdgeInsets.only(bottom: 20),
-                    child: const Text(
-                      "Nos pondremos en contacto contigo cuanto antes para confirmarla.",
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, color: vetTextColor),
-                    ),
+                ),
+                Container(
+                  alignment: Alignment.topCenter,
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: const Text(
+                    "Nos pondremos en contacto contigo cuanto antes para confirmarla.",
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal, color: vetTextColor),
                   ),
-                  RequestAppointmentButton(
-                    text: "Solicitar cita",
-                    onpressed: () {
-                      showModal(context);
-                    },
-                  ),
-                ],
-              ),
+                ),
+                RequestAppointmentButton(
+                  text: "Solicitar cita",
+                  onpressed: () {
+                    showModal(context);
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 
   void showModal(BuildContext context) {
@@ -129,14 +129,12 @@ class GetAppointmentScreen extends StatelessWidget {
       int minutes = time.minute;
 
       date = date!.add(Duration(hours: hours, minutes: minutes));
-      print(date);
       int millisecondsSinceEpoch = date.millisecondsSinceEpoch;
-      print(millisecondsSinceEpoch);
       return millisecondsSinceEpoch;
     }
 
     getVet() async {
-      if(objectID == '') return;
+      if (objectID == '') return;
       var refVet = await FirebaseFirestore.instance
           .collection("users")
           .doc(objectID)
@@ -145,19 +143,39 @@ class GetAppointmentScreen extends StatelessWidget {
     }
 
     void addAppointment(int dateAppointment) async {
-      await getVet();
-      await FirebaseFirestore.instance.collection('appointments').add({
-        'assignedId': objectID ?? '',
-        'assignedName': vet['fullname'] ?? '',
-        'date': dateAppointment,
-        'petId': petId,
-        'petName': mascotaController.text,
-        'userId': userId,
-        'isApproved': false,
-        'isClose': false,
-        'notes': "",
-        'reason': "Cita Programada",
-      });
+      EasyLoading.show(status: 'Cargando...');
+      try {
+        var appointments = await FirebaseFirestore.instance
+            .collection("appointments")
+            .where("isClose", isEqualTo: false)
+            .where("petId", isEqualTo: petId)
+            .get();
+        if (appointments.docs.isNotEmpty) {
+          EasyLoading.showError(
+              'No podemos registrar tu cita ya que ya tienes citas registradas.');
+          return;
+        }
+        await getVet();
+        await FirebaseFirestore.instance.collection('appointments').add({
+          'assignedId': objectID,
+          'assignedName': vet['fullname'] ?? '',
+          'date': dateAppointment,
+          'petId': petId,
+          'petName': mascotaController.text,
+          'userId': userId,
+          'isApproved': false,
+          'isClose': false,
+          'notes': "",
+          'reason': "Cita Programada",
+        });
+
+        EasyLoading.showSuccess("CITA REGISTRADA!");
+      } catch (e) {
+        EasyLoading.showError(
+            'No se pudo registrar tu cita, comunicate con el adminsitrador');
+      }
+
+      EasyLoading.dismiss();
     }
 
     showDialog(
@@ -242,19 +260,10 @@ class GetAppointmentScreen extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Aquí se podría agregar la lógica para guardar la cita en la base de datos
-                    print('Mascota: ${mascotaController.text}');
-                    print('Fecha: ${fechaController.text}');
-                    print('Hora: ${horaController.text}');
-                    print(dayPicked);
-
                     int dateAppointment =
                         getIntFromDatetime(dayPicked, timePicked);
-                    print('asss');
-                    print(dateAppointment);
                     addAppointment(dateAppointment);
 
-                    // getDataAppointment();
                     Navigator.pop(context);
                   },
                   child: const Text('Guardar'),

@@ -57,7 +57,7 @@ class _VetScreen extends State<VetScreen> {
               subtitle: Text(data['email']),
               leading: data['profile']['photoUrl'] == ''
                   ? Image.asset("assets/profile-client.jpg")
-                  : Image.network(data['profile']['photoUrl']),
+                  : Image.network(data['profile']['photoUrl'], width: 80),
               trailing: TextButton(
                 onPressed: () {
                   objectID = id;

@@ -46,7 +46,7 @@ class _LoginFormState extends State<LoginForm> {
         prefs.setBool("isClient", data['isClient'] ? true : false);
         prefs.setString("photoUrl", data['profile']['photoUrl']);
 
-        context.read<SelectViewModel>().set(Section.LISTVET, "");
+        context.read<SelectViewModel>().set(Section.HOME, "");
         Navigator.pushReplacementNamed(context, Home.routeName);
         EasyLoading.showSuccess("BIENVENIDO!");
       }).catchError((err) {
